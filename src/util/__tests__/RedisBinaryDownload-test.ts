@@ -1,27 +1,8 @@
-import fs from 'fs';
-import md5file from 'md5-file';
 import RedisBinaryDownload from '../RedisBinaryDownload';
 
 jest.mock('fs');
-jest.mock('md5-file');
 
 describe('RedisBinaryDownload', () => {
-  afterEach(() => {
-    delete process.env.REDISMS_SKIP_MD5_CHECK;
-  });
-
-  it('checkMD5 attribute can be set via constructor parameter', () => {
-    expect(new RedisBinaryDownload({ checkMD5: true }).checkMD5).toBe(true);
-    expect(new RedisBinaryDownload({ checkMD5: false }).checkMD5).toBe(false);
-  });
-
-  it(`if checkMD5 input parameter is missing, then it checks
-REDISMS_MD5_CHECK environment variable`, () => {
-    expect(new RedisBinaryDownload({}).checkMD5).toBe(false);
-    process.env.REDISMS_MD5_CHECK = '1';
-    expect(new RedisBinaryDownload({}).checkMD5).toBe(true);
-  });
-
   it('should use direct download', async () => {
     process.env['yarn_https-proxy'] = '';
     process.env['yarn_proxy'] = '';
@@ -93,47 +74,5 @@ REDISMS_MD5_CHECK environment variable`, () => {
     const callArg1 = (du.httpDownload as jest.Mock).mock.calls[0][0];
     expect(callArg1.rejectUnauthorized).toBeDefined();
     expect(callArg1.rejectUnauthorized).toBe(true);
-  });
-
-  it(`makeMD5check returns true if md5 of downloaded redisArchive is
-the same as in the reference result`, () => {
-    const someMd5 = 'md5';
-    (fs.readFileSync as jest.Mock).mockImplementationOnce(() => `${someMd5} fileName`);
-    (md5file.sync as jest.Mock).mockImplementationOnce(() => someMd5);
-    const redisArchivePath = '/some/path';
-    const fileWithReferenceMd5 = '/another/path';
-    const du = new RedisBinaryDownload({});
-    // $FlowFixMe
-    du.download = jest.fn(() => Promise.resolve(fileWithReferenceMd5));
-    const urlToRedisArchivePath = 'some-url';
-    du.checkMD5 = true;
-    return du.makeMD5check(urlToRedisArchivePath, redisArchivePath).then((res) => {
-      expect(res).toBe(true);
-      expect(du.download).toBeCalledWith(urlToRedisArchivePath);
-      expect(fs.readFileSync).toBeCalledWith(fileWithReferenceMd5);
-      expect(md5file.sync).toBeCalledWith(redisArchivePath);
-    });
-  });
-
-  it(`makeMD5check throws an error if md5 of downloaded redisArchive is NOT
-  the same as in the reference result`, () => {
-    (fs.readFileSync as jest.Mock).mockImplementationOnce(() => 'someMd5 fileName');
-    (md5file.sync as jest.Mock).mockImplementationOnce(() => 'anotherMd5');
-    const du = new RedisBinaryDownload({});
-    du.checkMD5 = true;
-    du.download = jest.fn(() => Promise.resolve(''));
-    expect(du.makeMD5check('', '')).rejects.toMatchInlineSnapshot(
-      `[Error: RedisBinaryDownload: md5 check failed]`
-    );
-  });
-
-  it('false value of checkMD5 attribute disables makeMD5check validation', async () => {
-    expect.assertions(1);
-    (fs.readFileSync as jest.Mock).mockImplementationOnce(() => 'someMd5 fileName');
-    (md5file.sync as jest.Mock).mockImplementationOnce(() => 'anotherMd5');
-    const du = new RedisBinaryDownload({});
-    du.checkMD5 = false;
-    const result = await du.makeMD5check('', '');
-    expect(result).toBe(undefined);
   });
 });

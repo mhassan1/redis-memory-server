@@ -25,7 +25,7 @@ describe('RedisMemoryServer', () => {
     it('_startUpInstance should be called a second time if an error is thrown on the first call and assign the current port to nulll', async () => {
       RedisMemoryServer.prototype._startUpInstance = jest
         .fn()
-        .mockRejectedValueOnce(new Error('Redisd shutting down'))
+        .mockRejectedValueOnce(new Error('redis-server shutting down'))
         .mockResolvedValueOnce({});
 
       const redisServer = new RedisMemoryServer({
@@ -79,23 +79,23 @@ describe('RedisMemoryServer', () => {
   });
 
   describe('stop()', () => {
-    it('should stop redisd and answer on isRunning() method', async () => {
-      const redisd = new RedisMemoryServer({
+    it('should stop redis-server and answer on isRunning() method', async () => {
+      const redisServer = new RedisMemoryServer({
         autoStart: false,
       });
 
-      expect(redisd.getInstanceInfo()).toBeFalsy();
-      redisd.start();
-      // while redisd launching `getInstanceInfo` is false
-      expect(redisd.getInstanceInfo()).toBeFalsy();
+      expect(redisServer.getInstanceInfo()).toBeFalsy();
+      redisServer.start();
+      // while redis-server launching `getInstanceInfo` is false
+      expect(redisServer.getInstanceInfo()).toBeFalsy();
 
       // when instance launched then data became avaliable
-      await redisd.ensureInstance();
-      expect(redisd.getInstanceInfo()).toBeDefined();
+      await redisServer.ensureInstance();
+      expect(redisServer.getInstanceInfo()).toBeDefined();
 
       // after stop, instance data should be empty
-      await redisd.stop();
-      expect(redisd.getInstanceInfo()).toBeFalsy();
+      await redisServer.stop();
+      expect(redisServer.getInstanceInfo()).toBeFalsy();
     });
   });
 
@@ -116,16 +116,6 @@ describe('RedisMemoryServer', () => {
       await RedisMemoryServer.create({ autoStart: true });
 
       expect(RedisMemoryServer.prototype.start).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('getUri()', () => {
-    it('"getUri" should return with "otherDb"', async () => {
-      const redisServer = await RedisMemoryServer.create({ autoStart: true });
-      const port: number = await redisServer.getPort();
-      expect(await redisServer.getUri('customDB')).toBe(`redis://127.0.0.1:${port}/customDB?`);
-
-      await redisServer.stop();
     });
   });
 });

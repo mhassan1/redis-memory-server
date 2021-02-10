@@ -1,18 +1,16 @@
-import os from 'os';
 import url from 'url';
 import path from 'path';
 import fs from 'fs';
-import md5File from 'md5-file';
+import rimraf from 'rimraf';
 import https from 'https';
-import { createUnzip } from 'zlib';
-import tar from 'tar-stream';
-import yauzl from 'yauzl';
+import tar from 'tar';
 import RedisBinaryDownloadUrl from './RedisBinaryDownloadUrl';
 import { DownloadProgressT } from '../types';
 import { LATEST_VERSION } from './RedisBinary';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import { exec } from 'child_process';
 import { promisify } from 'util';
-import resolveConfig, { envToBool } from './resolve-config';
+import './resolve-config';
 import debug from 'debug';
 
 const log = debug('RedisMS:RedisBinaryDownload');
@@ -20,9 +18,6 @@ const log = debug('RedisMS:RedisBinaryDownload');
 export interface RedisBinaryDownloadOpts {
   version?: string;
   downloadDir?: string;
-  platform?: string;
-  arch?: string;
-  checkMD5?: boolean;
 }
 
 interface HttpDownloadOptions {
@@ -35,24 +30,18 @@ interface HttpDownloadOptions {
 }
 
 /**
- * Download and extract the "redisd" binary
+ * Download and extract the "redis-server" binary
  */
 export default class RedisBinaryDownload {
   dlProgress: DownloadProgressT;
   _downloadingUrl?: string;
 
-  checkMD5: boolean;
   downloadDir: string;
-  arch: string;
   version: string;
-  platform: string;
 
-  constructor({ platform, arch, downloadDir, version, checkMD5 }: RedisBinaryDownloadOpts) {
-    this.platform = platform ?? os.platform();
-    this.arch = arch ?? os.arch();
+  constructor({ downloadDir, version }: RedisBinaryDownloadOpts) {
     this.version = version ?? LATEST_VERSION;
     this.downloadDir = path.resolve(downloadDir || 'redis-download');
-    this.checkMD5 = checkMD5 ?? envToBool(resolveConfig('MD5_CHECK'));
     this.dlProgress = {
       current: 0,
       length: 0,
@@ -62,36 +51,35 @@ export default class RedisBinaryDownload {
   }
 
   /**
-   * Get the path of the already downloaded "redisd" file
+   * Get the path of the already downloaded "redis-server" file
    * otherwise download it and then return the path
    */
-  async getRedisdPath(): Promise<string> {
-    const binaryName = this.platform === 'win32' ? 'redisd.exe' : 'redisd';
-    const redisdPath = path.resolve(this.downloadDir, this.version, binaryName);
+  async getRedisServerPath(): Promise<string> {
+    const binaryName = 'redis-server';
+    const redisServerPath = path.resolve(this.downloadDir, this.version, binaryName);
 
-    if (await this.locationExists(redisdPath)) {
-      return redisdPath;
+    if (await this.locationExists(redisServerPath)) {
+      return redisServerPath;
     }
 
     const redisArchive = await this.startDownload();
-    await this.extract(redisArchive);
+    const extractDir = await this.extract(redisArchive);
+    await this.makeInstall(extractDir);
     fs.unlinkSync(redisArchive);
 
-    if (await this.locationExists(redisdPath)) {
-      return redisdPath;
+    if (await this.locationExists(redisServerPath)) {
+      return redisServerPath;
     }
 
-    throw new Error(`Cannot find downloaded redisd binary by path ${redisdPath}`);
+    throw new Error(`Cannot find downloaded redis-server binary by path ${redisServerPath}`);
   }
 
   /**
-   * Download the Redis Archive and check it against an MD5
+   * Download the Redis Archive
    * @returns The Redis Archive location
    */
   async startDownload(): Promise<string> {
     const mbdUrl = new RedisBinaryDownloadUrl({
-      platform: this.platform,
-      arch: this.arch,
       version: this.version,
     });
 
@@ -101,36 +89,7 @@ export default class RedisBinaryDownload {
 
     const downloadUrl = await mbdUrl.getDownloadUrl();
 
-    const redisArchive = await this.download(downloadUrl);
-
-    await this.makeMD5check(`${downloadUrl}.md5`, redisArchive);
-
-    return redisArchive;
-  }
-
-  /**
-   * Download MD5 file and check it against the Redis Archive
-   * @param urlForReferenceMD5 URL to download the MD5
-   * @param redisArchive The Redis Archive file location
-   */
-  async makeMD5check(
-    urlForReferenceMD5: string,
-    redisArchive: string
-  ): Promise<boolean | undefined> {
-    if (!this.checkMD5) {
-      return undefined;
-    }
-    log('Checking MD5 of downloaded binary...');
-    const redisArchiveMd5 = await this.download(urlForReferenceMD5);
-    const signatureContent = fs.readFileSync(redisArchiveMd5).toString('utf-8');
-    const m = signatureContent.match(/(.*?)\s/);
-    const md5Remote = m ? m[1] : null;
-    const md5Local = md5File.sync(redisArchive);
-    log(`Local MD5: ${md5Local}, Remote MD5: ${md5Remote}`);
-    if (md5Remote !== md5Local) {
-      throw new Error('RedisBinaryDownload: md5 check failed');
-    }
-    return true;
+    return this.download(downloadUrl);
   }
 
   /**
@@ -195,27 +154,15 @@ export default class RedisBinaryDownload {
    * @returns extracted directory location
    */
   async extract(redisArchive: string): Promise<string> {
-    const binaryName = this.platform === 'win32' ? 'redisd.exe' : 'redisd';
-    const extractDir = path.resolve(this.downloadDir, this.version);
+    const extractDir = path.resolve(this.downloadDir, this.version, 'extracted');
     log(`extract(): ${extractDir}`);
 
     if (!fs.existsSync(extractDir)) {
-      fs.mkdirSync(extractDir);
+      fs.mkdirSync(extractDir, { recursive: true });
     }
 
-    let filter: (file: string) => boolean;
-    if (this.platform === 'win32') {
-      filter = (file: string) => {
-        return /bin\/redisd.exe$/.test(file) || /.dll$/.test(file);
-      };
-    } else {
-      filter = (file: string) => /bin\/redisd$/.test(file);
-    }
-
-    if (/(.tar.gz|.tgz)$/.test(path.extname(redisArchive))) {
-      await this.extractTarGz(redisArchive, extractDir, filter);
-    } else if (/.zip$/.test(path.extname(redisArchive))) {
-      await this.extractZip(redisArchive, extractDir, filter);
+    if (redisArchive.endsWith('.tar.gz')) {
+      await this.extractTarGz(redisArchive, extractDir);
     } else {
       throw new Error(
         `RedisBinaryDownload: unsupported archive ${redisArchive} (downloaded from ${
@@ -224,13 +171,6 @@ export default class RedisBinaryDownload {
       );
     }
 
-    if (!(await this.locationExists(path.resolve(this.downloadDir, this.version, binaryName)))) {
-      throw new Error(
-        `RedisBinaryDownload: missing redisd binary in ${redisArchive} (downloaded from ${
-          this._downloadingUrl ?? 'unkown'
-        }). Broken archive from Redis Provider?`
-      );
-    }
     return extractDir;
   }
 
@@ -238,82 +178,12 @@ export default class RedisBinaryDownload {
    * Extract a .tar.gz archive
    * @param redisArchive Archive location
    * @param extractDir Directory to extract to
-   * @param filter Method to determine which files to extract
    */
-  async extractTarGz(
-    redisArchive: string,
-    extractDir: string,
-    filter: (file: string) => boolean
-  ): Promise<void> {
-    const extract = tar.extract();
-    extract.on('entry', (header, stream, next) => {
-      if (filter(header.name)) {
-        stream.pipe(
-          fs.createWriteStream(path.resolve(extractDir, path.basename(header.name)), {
-            mode: 0o775,
-          })
-        );
-      }
-      stream.on('end', () => next());
-      stream.resume();
-    });
-
-    return new Promise((resolve, reject) => {
-      fs.createReadStream(redisArchive)
-        .on('error', (err) => {
-          reject('Unable to open tarball ' + redisArchive + ': ' + err);
-        })
-        .pipe(createUnzip())
-        .on('error', (err) => {
-          reject('Error during unzip for ' + redisArchive + ': ' + err);
-        })
-        .pipe(extract)
-        .on('error', (err) => {
-          reject('Error during untar for ' + redisArchive + ': ' + err);
-        })
-        .on('finish', (result) => {
-          resolve(result);
-        });
-    });
-  }
-
-  /**
-   * Extract a .zip archive
-   * @param redisArchive Archive location
-   * @param extractDir Directory to extract to
-   * @param filter Method to determine which files to extract
-   */
-  async extractZip(
-    redisArchive: string,
-    extractDir: string,
-    filter: (file: string) => boolean
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      yauzl.open(redisArchive, { lazyEntries: true }, (e, zipfile) => {
-        if (e || !zipfile) {
-          return reject(e);
-        }
-        zipfile.readEntry();
-
-        zipfile.on('end', () => resolve());
-
-        zipfile.on('entry', (entry) => {
-          if (!filter(entry.fileName)) {
-            return zipfile.readEntry();
-          }
-          zipfile.openReadStream(entry, (e, r) => {
-            if (e || !r) {
-              return reject(e);
-            }
-            r.on('end', () => zipfile.readEntry());
-            r.pipe(
-              fs.createWriteStream(path.resolve(extractDir, path.basename(entry.fileName)), {
-                mode: 0o775,
-              })
-            );
-          });
-        });
-      });
+  async extractTarGz(redisArchive: string, extractDir: string): Promise<void> {
+    await tar.extract({
+      file: redisArchive,
+      cwd: extractDir,
+      strip: 1,
     });
   }
 
@@ -336,17 +206,13 @@ export default class RedisBinaryDownload {
         .get(httpOptions as any, (response) => {
           // "as any" because otherwise the "agent" wouldnt match
           if (response.statusCode != 200) {
-            if (response.statusCode === 403) {
+            if (response.statusCode === 404) {
               reject(
                 new Error(
-                  "Status Code is 403 (Redis's 404)\n" +
-                    "This means that the requested version-platform combination doesn't exist\n" +
+                  'Status Code is 404\n' +
+                    "This means that the requested version doesn't exist\n" +
                     `  Used Url: "https://${httpOptions.hostname}${httpOptions.path}"\n` +
-                    "Try to use different version 'new RedisMemoryServer({ binary: { version: 'X.Y.Z' } })'\n" +
-                    'List of available versions can be found here:\n' +
-                    '  https://www.redis.org/dl/linux for Linux\n' +
-                    '  https://www.redis.org/dl/osx for OSX\n' +
-                    '  https://www.redis.org/dl/win32 for Windows'
+                    "Try to use different version 'new RedisMemoryServer({ binary: { version: 'X.Y.Z' } })'\n"
                 )
               );
               return;
@@ -365,15 +231,12 @@ export default class RedisBinaryDownload {
           response.pipe(fileStream);
 
           fileStream.on('finish', async () => {
-            if (
-              this.dlProgress.current < this.dlProgress.length &&
-              !httpOptions.path.endsWith('.md5')
-            ) {
+            if (this.dlProgress.current < this.dlProgress.length) {
               const downloadUrl =
                 this._downloadingUrl || `https://${httpOptions.hostname}/${httpOptions.path}`;
               reject(
                 new Error(
-                  `Too small (${this.dlProgress.current} bytes) redisd binary downloaded from ${downloadUrl}`
+                  `Too small (${this.dlProgress.current} bytes) redis-server binary downloaded from ${downloadUrl}`
                 )
               );
               return;
@@ -415,7 +278,7 @@ export default class RedisBinaryDownload {
       Math.round(((100.0 * this.dlProgress.current) / this.dlProgress.length) * 10) / 10;
     const mbComplete = Math.round((this.dlProgress.current / 1048576) * 10) / 10;
 
-    const crReturn = this.platform === 'win32' ? '\x1b[0G' : '\r';
+    const crReturn = '\r';
     const message = `Downloading Redis ${this.version}: ${percentComplete} % (${mbComplete}mb / ${this.dlProgress.totalMb}mb)${crReturn}`;
     if (process.stdout.isTTY) {
       // if TTY overwrite last line over and over until finished
@@ -423,6 +286,24 @@ export default class RedisBinaryDownload {
     } else {
       console.log(message);
     }
+  }
+
+  /**
+   * Make and install given extracted directory
+   * @param extractDir Extracted directory location
+   * @returns void
+   */
+  async makeInstall(extractDir: string): Promise<void> {
+    const binaryName = 'redis-server';
+    log(`makeInstall(): ${extractDir}`);
+    await promisify(exec)('make', {
+      cwd: extractDir,
+    });
+    await promisify(fs.copyFile)(
+      path.resolve(extractDir, 'src', binaryName),
+      path.resolve(extractDir, '..', binaryName)
+    );
+    await promisify(rimraf)(extractDir);
   }
 
   /**

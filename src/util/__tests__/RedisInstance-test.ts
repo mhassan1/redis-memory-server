@@ -19,113 +19,67 @@ describe('RedisInstance', () => {
     const inst = new RedisInstance({
       instance: {
         port: 27333,
-        dbPath: tmpDir.name,
-        storageEngine: 'ephemeralForTest',
       },
     });
     expect(inst.prepareCommandArgs()).toEqual([
-      '--bind_ip',
+      '--save',
+      '',
+      '--appendonly',
+      'no',
+      '--bind',
       '127.0.0.1',
       '--port',
       '27333',
-      '--storageEngine',
-      'ephemeralForTest',
-      '--dbpath',
-      tmpDir.name,
-      '--noauth',
-    ]);
-  });
-
-  it('should allow specifying replSet', () => {
-    const inst = new RedisInstance({
-      instance: {
-        port: 27555,
-        dbPath: tmpDir.name,
-        replSet: 'testset',
-      },
-    });
-    expect(inst.prepareCommandArgs()).toEqual([
-      '--bind_ip',
-      '127.0.0.1',
-      '--port',
-      '27555',
-      '--dbpath',
-      tmpDir.name,
-      '--noauth',
-      '--replSet',
-      'testset',
-    ]);
-  });
-
-  it('should be able to enable auth', () => {
-    const inst = new RedisInstance({
-      instance: {
-        port: 27555,
-        dbPath: tmpDir.name,
-        auth: true,
-      },
-    });
-    expect(inst.prepareCommandArgs()).toEqual([
-      '--bind_ip',
-      '127.0.0.1',
-      '--port',
-      '27555',
-      '--dbpath',
-      tmpDir.name,
-      '--auth',
     ]);
   });
 
   it('should be able to pass arbitrary args', () => {
-    const args = ['--notablescan', '--nounixsocket'];
+    const args = ['--arg-1', '--arg-2'];
     const inst = new RedisInstance({
       instance: {
         port: 27555,
-        dbPath: tmpDir.name,
         args,
       },
     });
     expect(inst.prepareCommandArgs()).toEqual(
-      ['--bind_ip', '127.0.0.1', '--port', '27555', '--dbpath', tmpDir.name, '--noauth'].concat(
-        args
-      )
+      ['--save', '', '--appendonly', 'no', '--bind', '127.0.0.1', '--port', '27555'].concat(args)
     );
   });
 
   it('should start instance on port 27333', async () => {
-    const redisd = await RedisInstance.run({
-      instance: { port: 27333, dbPath: tmpDir.name },
+    const redisServer = await RedisInstance.run({
+      instance: { port: 27333 },
       binary: { version: LATEST_VERSION },
     });
 
-    expect(redisd.getPid()).toBeGreaterThan(0);
+    expect(redisServer.getPid()).toBeGreaterThan(0);
 
-    await redisd.kill();
+    await redisServer.kill();
   });
 
   it('should throw error if port is busy', async () => {
-    const redisd = await RedisInstance.run({
-      instance: { port: 27444, dbPath: tmpDir.name },
+    const redisServer = await RedisInstance.run({
+      instance: { port: 27444 },
       binary: { version: LATEST_VERSION },
     });
 
     await expect(
       RedisInstance.run({
-        instance: { port: 27444, dbPath: tmpDir.name },
+        instance: { port: 27444 },
         binary: { version: LATEST_VERSION },
       })
     ).rejects.toBeDefined();
 
-    await redisd.kill();
+    await redisServer.kill();
   });
 
   it('should await while redis is killed', async () => {
-    const redisd: RedisInstance = await RedisInstance.run({
-      instance: { port: 27445, dbPath: tmpDir.name },
+    const redisServer: RedisInstance = await RedisInstance.run({
+      instance: { port: 27445 },
       binary: { version: LATEST_VERSION },
     });
-    const pid: any = redisd.getPid();
-    const killerPid: any = redisd.killerProcess?.pid;
+    const pid: any = redisServer.getPid();
+    const killerPid: any = redisServer.killerProcess?.pid;
     expect(pid).toBeGreaterThan(0);
     expect(killerPid).toBeGreaterThan(0);
 
@@ -140,18 +94,8 @@ describe('RedisInstance', () => {
 
     expect(isPidRunning(pid)).toBeTruthy();
     expect(isPidRunning(killerPid)).toBeTruthy();
-    await redisd.kill();
+    await redisServer.kill();
     expect(isPidRunning(pid)).toBeFalsy();
     expect(isPidRunning(killerPid)).toBeFalsy();
-  });
-
-  it('should work with redis 4.0.3', async () => {
-    const redisd = await RedisInstance.run({
-      instance: { port: 27445, dbPath: tmpDir.name },
-      binary: { version: '4.0.3' },
-    });
-    const pid: any = redisd.getPid();
-    expect(pid).toBeGreaterThan(0);
-    await redisd.kill();
   });
 });

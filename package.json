@@ -1,13 +1,12 @@
 {
   "name": "redis-memory-server",
-  "version": "6.6.9",
-  "description": "Redis Server for testing (core package, without autodownload). The server will allow you to connect your favourite ODM or client library to the Redis Server and run parallel integration tests isolated from each other.",
+  "version": "0.0.0",
+  "description": "Redis Server for testing. The server will allow you to connect your favorite client library to the Redis Server and run parallel integration tests isolated from each other.",
   "main": "lib/index",
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nodkz/redis-memory-server.git",
-    "directory": "packages/redis-memory-server-core"
+    "url": "https://github.com/mhassan1/redis-memory-server.git"
   },
   "engines": {
     "node": ">=10.15.0"
@@ -24,26 +23,54 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nodkz/redis-memory-server/issues"
+    "url": "https://github.com/mhassan1/redis-memory-server/issues"
   },
-  "homepage": "https://github.com/nodkz/redis-memory-server",
+  "homepage": "https://github.com/mhassan1/redis-memory-server",
   "devDependencies": {
+    "@commitlint/cli": "11.0.0",
+    "@commitlint/config-conventional": "11.0.0",
     "@types/cross-spawn": "^6.0.2",
     "@types/debug": "^4.1.5",
-    "@types/dedent": "^0.7.0",
     "@types/find-cache-dir": "^3.2.0",
     "@types/find-package-json": "^1.1.1",
+    "@types/ioredis": "^4.19.3",
+    "@types/jest": "26.0.14",
     "@types/lockfile": "^1.0.1",
-    "@types/md5-file": "^4.0.2",
     "@types/mkdirp": "^1.0.1",
-    "@types/redis": "3.5.27",
+    "@types/node": "14.11.2",
+    "@types/rimraf": "^3.0.0",
     "@types/semver": "7.3.4",
-    "@types/tar-stream": "^2.1.0",
+    "@types/tar": "^4.0.4",
+    "@types/tmp": "^0.2.0",
     "@types/uuid": "^8.0.0",
-    "@types/yauzl": "^2.9.1"
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "commitlint": "11.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "6.12.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "husky": "^4.3.0",
+    "ioredis": "^4.22.0",
+    "jest": "^26.6.3",
+    "lint-staged": "10.4.0",
+    "prettier": "2.1.2",
+    "standard-version": "^9.1.0",
+    "ts-jest": "26.4.1",
+    "typescript": "^4.1.4"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,js,jsx}": [
+      "eslint --fix"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
   },
   "dependencies": {
-    "@types/tmp": "^0.2.0",
     "camelcase": "^6.0.0",
     "cross-spawn": "^7.0.3",
     "debug": "^4.2.0",
@@ -52,26 +79,25 @@
     "get-port": "^5.1.1",
     "https-proxy-agent": "^5.0.0",
     "lockfile": "^1.0.4",
-    "md5-file": "^5.0.0",
     "mkdirp": "^1.0.4",
+    "rimraf": "^3.0.2",
     "semver": "^7.3.2",
-    "tar-stream": "^2.1.4",
+    "tar": "^6.1.0",
     "tmp": "^0.2.1",
-    "uuid": "8.3.0",
-    "yauzl": "^2.10.0"
-  },
-  "optionalDependencies": {
-    "redis": "3.6.2"
+    "uuid": "8.3.0"
   },
   "scripts": {
+    "postinstall": "node ./scripts/postinstall",
     "clean": "rimraf tmp lib coverage node_modules/.cache",
     "build": "rimraf ./lib && tsc -p ./tsconfig.build.json",
     "watch": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --watchAll",
     "coverage": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --coverage",
-    "lint": "npm run eslint && npm run tscheck",
-    "eslint": "eslint -c ../../.eslintrc.js 'src/**/*.{js,ts}'",
-    "test": "npm run lint && npm run coverage",
-    "test:watch": "npm run watch",
+    "lint": "yarn eslint && yarn tscheck",
+    "release": "standard-version",
+    "publish": "yarn build && npm publish",
+    "eslint": "eslint '**/*.{js,ts}'",
+    "test": "yarn lint && yarn coverage",
+    "test:watch": "yarn watch",
     "tscheck": "tsc --noEmit"
   }
 }

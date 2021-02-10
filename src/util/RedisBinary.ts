@@ -7,15 +7,12 @@ import findCacheDir from 'find-cache-dir';
 import { execSync } from 'child_process';
 import { promisify } from 'util';
 import RedisBinaryDownload from './RedisBinaryDownload';
-import resolveConfig, { envToBool } from './resolve-config';
+import resolveConfig from './resolve-config';
 import debug from 'debug';
 
 const log = debug('RedisMS:RedisBinary');
 
-// TODO: return back `latest` version when it will be fixed in Redis distro (for now use 4.0.14 😂)
-// More details in https://github.com/nodkz/redis-memory-server/issues/131
-// export const LATEST_VERSION = 'latest';
-export const LATEST_VERSION: string = '4.0.14';
+export const LATEST_VERSION: string = 'stable';
 
 export interface RedisBinaryCache {
   [version: string]: string;
@@ -24,9 +21,6 @@ export interface RedisBinaryCache {
 export interface RedisBinaryOpts {
   version?: string;
   downloadDir?: string;
-  platform?: string;
-  arch?: string;
-  checkMD5?: boolean;
 }
 
 export default class RedisBinary {
@@ -66,7 +60,7 @@ export default class RedisBinary {
    * @returns The BinaryPath the binary has been downloaded to
    */
   static async getDownloadPath(options: Required<RedisBinaryOpts>): Promise<string> {
-    const { downloadDir, platform, arch, version, checkMD5 } = options;
+    const { downloadDir, version } = options;
     // create downloadDir
     await mkdirp(downloadDir);
 
@@ -86,7 +80,7 @@ export default class RedisBinary {
           retryWait: 100,
         },
         (err: any) => {
-          return err ? reject(err) : resolve();
+          return err ? reject(err) : resolve(null);
         }
       );
     });
@@ -95,12 +89,9 @@ export default class RedisBinary {
     if (!this.getCachePath(version)) {
       const downloader = new RedisBinaryDownload({
         downloadDir,
-        platform,
-        arch,
         version,
-        checkMD5,
       });
-      this.cache[version] = await downloader.getRedisdPath();
+      this.cache[version] = await downloader.getRedisServerPath();
     }
     // remove lock
     await new Promise((res) => {
@@ -110,7 +101,7 @@ export default class RedisBinary {
             ? `RedisBinary: Error when removing download lock ${err}`
             : `RedisBinary: Download lock removed`
         );
-        res(); // we don't care if it was successful or not
+        res(null); // we don't care if it was successful or not
       });
     });
     return this.getCachePath(version);
@@ -144,11 +135,8 @@ export default class RedisBinary {
               }) || '',
               'redis-binaries'
             )),
-      platform: resolveConfig('PLATFORM') || os.platform(),
-      arch: resolveConfig('ARCH') || os.arch(),
       version: resolveConfig('VERSION') || LATEST_VERSION,
       systemBinary: resolveConfig('SYSTEM_BINARY'),
-      checkMD5: envToBool(resolveConfig('MD5_CHECK')),
     };
 
     /** Provided Options combined with the Default Options */
@@ -195,7 +183,7 @@ export default class RedisBinary {
       );
     }
 
-    log(`RedisBinary: Redisd binary path: "${binaryPath}"`);
+    log(`RedisBinary: redis-server binary path: "${binaryPath}"`);
     return binaryPath;
   }
 }

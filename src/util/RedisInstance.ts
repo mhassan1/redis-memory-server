@@ -3,13 +3,7 @@ import { default as spawnChild } from 'cross-spawn';
 import path from 'path';
 import RedisBinary from './RedisBinary';
 import { RedisBinaryOpts } from './RedisBinary';
-import {
-  StorageEngineT,
-  SpawnOptions,
-  DebugFn,
-  ErrorVoidCallback,
-  EmptyVoidCallback,
-} from '../types';
+import { SpawnOptions, DebugFn, ErrorVoidCallback, EmptyVoidCallback } from '../types';
 import debug from 'debug';
 import { isNullOrUndefined } from './db_util';
 import { lt } from 'semver';
@@ -20,16 +14,12 @@ if (lt(process.version, '10.15.0')) {
 
 const log = debug('RedisMS:RedisInstance');
 
-export interface RedisdOps {
+export interface RedisServerOps {
   // instance options
   instance: {
     port?: number;
     ip?: string; // for binding to all IP addresses set it to `::,0.0.0.0`, by default '127.0.0.1'
-    storageEngine?: StorageEngineT;
-    dbPath?: string;
-    replSet?: string;
     args?: string[];
-    auth?: boolean;
   };
 
   // redis binary options
@@ -44,22 +34,19 @@ export interface RedisdOps {
  */
 export default class RedisInstance {
   static childProcessList: ChildProcess[] = [];
-  opts: RedisdOps;
+  opts: RedisServerOps;
   debug: DebugFn;
 
   childProcess: ChildProcess | null;
   killerProcess: ChildProcess | null;
-  waitForPrimaryResolveFns: ((value: boolean) => void)[];
-  isInstancePrimary: boolean = false;
   isInstanceReady: boolean = false;
   instanceReady: EmptyVoidCallback = () => {};
   instanceFailed: ErrorVoidCallback = () => {};
 
-  constructor(opts: RedisdOps) {
+  constructor(opts: RedisServerOps) {
     this.opts = opts;
     this.childProcess = null;
     this.killerProcess = null;
-    this.waitForPrimaryResolveFns = [];
 
     if (!this.opts.instance) {
       this.opts.instance = {};
@@ -83,42 +70,30 @@ export default class RedisInstance {
    * Create an new instance an call method "run"
    * @param opts Options passed to the new instance
    */
-  static async run(opts: RedisdOps): Promise<RedisInstance> {
+  static async run(opts: RedisServerOps): Promise<RedisInstance> {
     const instance = new this(opts);
     return instance.run();
   }
 
   /**
-   * Create an array of arguments for the redisd instance
+   * Create an array of arguments for the redis-server instance
    */
   prepareCommandArgs(): string[] {
-    const { ip, port, storageEngine, dbPath, replSet, auth, args } = this.opts.instance;
+    const { ip, port, args } = this.opts.instance;
 
     const result: string[] = [];
-    result.push('--bind_ip', ip || '127.0.0.1');
+    result.push('--save', ''); // disable RDB snapshotting
+    result.push('--appendonly', 'no'); // disable AOF
+    result.push('--bind', ip || '127.0.0.1');
     if (port) {
       result.push('--port', port.toString());
-    }
-    if (storageEngine) {
-      result.push('--storageEngine', storageEngine);
-    }
-    if (dbPath) {
-      result.push('--dbpath', dbPath);
-    }
-    if (!auth) {
-      result.push('--noauth');
-    } else if (auth) {
-      result.push('--auth');
-    }
-    if (replSet) {
-      result.push('--replSet', replSet);
     }
 
     return result.concat(args ?? []);
   }
 
   /**
-   * Create the redisd process
+   * Create the redis-server process
    */
   async run(): Promise<this> {
     const launch = new Promise((resolve, reject) => {
@@ -137,7 +112,7 @@ export default class RedisInstance {
     });
 
     const redisBin = await RedisBinary.getPath(this.opts.binary);
-    this.childProcess = this._launchRedisd(redisBin);
+    this.childProcess = this._launchRedisServer(redisBin);
     this.killerProcess = this._launchKiller(process.pid, this.childProcess.pid);
 
     await launch;
@@ -173,7 +148,7 @@ export default class RedisInstance {
         process.once(`exit`, (code, signal) => {
           debugfn(`- ${name}: got exit signal, Code: ${code}, Signal: ${signal}`);
           clearTimeout(timeout);
-          resolve();
+          resolve(null);
         });
         debugfn(`- ${name}: send "SIGINT"`);
         process.kill('SIGINT');
@@ -197,29 +172,17 @@ export default class RedisInstance {
   }
 
   /**
-   * Get the PID of the redisd instance
+   * Get the PID of the redis-server instance
    */
   getPid(): number | undefined {
     return this.childProcess?.pid;
   }
 
   /**
-   * Wait until the Primary redisd is running
-   */
-  async waitPrimaryReady(): Promise<boolean> {
-    if (this.isInstancePrimary) {
-      return true;
-    }
-    return new Promise((resolve) => {
-      this.waitForPrimaryResolveFns.push(resolve);
-    });
-  }
-
-  /**
-   * Actually launch redisd
+   * Actually launch redis-server
    * @param redisBin The binary to run
    */
-  _launchRedisd(redisBin: string): ChildProcess {
+  _launchRedisServer(redisBin: string): ChildProcess {
     const spawnOpts = this.opts.spawn ?? {};
     if (!spawnOpts.stdio) {
       spawnOpts.stdio = 'pipe';
@@ -239,9 +202,9 @@ export default class RedisInstance {
   }
 
   /**
-   * Spawn an child to kill the parent and the redisd instance if both are Dead
+   * Spawn an child to kill the parent and the redis-server instance if both are Dead
    * @param parentPid Parent to kill
-   * @param childPid Redisd process to kill
+   * @param childPid redis-server process to kill
    */
   _launchKiller(parentPid: number, childPid: number): ChildProcess {
     this.debug(`Called RedisInstance._launchKiller(parent: ${parentPid}, child: ${childPid}):`);
@@ -283,10 +246,10 @@ export default class RedisInstance {
    */
   closeHandler(code: number): void {
     if (code != 0) {
-      this.debug('Redisd instance closed with an non-0 code!');
+      this.debug('redis-server instance closed with an non-0 code!');
     }
     this.debug(`CLOSE: ${code}`);
-    this.instanceFailed(`Redisd instance closed with code "${code}"`);
+    this.instanceFailed(`redis-server instance closed with code "${code}"`);
   }
 
   /**
@@ -305,37 +268,21 @@ export default class RedisInstance {
     const line: string = message.toString();
     this.debug(`STDOUT: ${line}`);
 
-    if (/waiting for connections/i.test(line)) {
+    if (/Ready to accept connections/i.test(line)) {
       this.instanceReady();
-    } else if (/addr already in use/i.test(line)) {
+    } else if (/Address already in use/i.test(line)) {
       this.instanceFailed(`Port ${this.opts.instance.port} already in use`);
-    } else if (/redisd instance already running/i.test(line)) {
-      this.instanceFailed('Redisd already running');
+    } else if (/redis-server instance already running/i.test(line)) {
+      this.instanceFailed('redis-server already running');
     } else if (/permission denied/i.test(line)) {
-      this.instanceFailed('Redisd permission denied');
-    } else if (/Data directory .*? not found/i.test(line)) {
-      this.instanceFailed('Data directory not found');
-    } else if (/CURL_OPENSSL_3.*not found/i.test(line)) {
-      this.instanceFailed(
-        'libcurl3 is not available on your system. Redisd requires it and cannot be started without it.\n' +
-          'You should manually install libcurl3 or try to use an newer version of Redis\n'
-      );
-    } else if (/CURL_OPENSSL_4.*not found/i.test(line)) {
-      this.instanceFailed(
-        'libcurl4 is not available on your system. Redisd requires it and cannot be started without it.\n' +
-          'You need to manually install libcurl4\n'
-      );
+      this.instanceFailed('redis-server permission denied');
     } else if (/shutting down with code/i.test(line)) {
-      // if redisd started succesfully then no error on shutdown!
+      // if redis-server started succesfully then no error on shutdown!
       if (!this.isInstanceReady) {
-        this.instanceFailed('Redisd shutting down');
+        this.instanceFailed('redis-server shutting down');
       }
     } else if (/\*\*\*aborting after/i.test(line)) {
-      this.instanceFailed('Redisd internal error');
-    } else if (/transition to primary complete; database writes are now permitted/i.test(line)) {
-      this.isInstancePrimary = true;
-      this.debug('Calling all waitForPrimary resolve functions');
-      this.waitForPrimaryResolveFns.forEach((resolveFn) => resolveFn(true));
+      this.instanceFailed('redis-server internal error');
     }
   }
 }

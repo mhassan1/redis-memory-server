@@ -4,7 +4,7 @@
 This script is used as postinstall hook.
 
 When you install redis-memory-server package
-npm or yarn downloads the latest version of redis binaries.
+npm or yarn downloads and compiles the latest version of redis binaries.
 
 It helps to skip timeout setup `jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;`
 when first test run hits Redis binary downloading to the cache.
@@ -18,13 +18,13 @@ function isModuleExists(name) {
   }
 }
 
-if (!isModuleExists('../redis-memory-server-core/lib/util/resolve-config')) {
+if (!isModuleExists('../lib/util/resolve-config')) {
   console.log('Could not resolve postinstall configuration');
   return;
 }
 
-const rc = require('../redis-memory-server-core/lib/util/resolve-config');
-rc.reInitializePackageJson(process.env.INIT_CWD);
+const rc = require('../lib/util/resolve-config');
+rc.findPackageJson(process.env.INIT_CWD);
 
 const envDisablePostinstall = rc.default('DISABLE_POSTINSTALL');
 
@@ -40,7 +40,7 @@ if (typeof envSystemBinary === 'string') {
   process.exit(0);
 }
 
-const redisBinaryModule = '../redis-memory-server-core/lib/util/RedisBinary';
+const redisBinaryModule = '../lib/util/RedisBinary';
 if (isModuleExists(redisBinaryModule)) {
   const RedisBinary = require(redisBinaryModule).default;
 

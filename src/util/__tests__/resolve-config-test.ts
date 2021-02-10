@@ -73,7 +73,7 @@ describe('resolveConfig', () => {
       expect(got).toBe('4.0.0');
     });
 
-    test('with explicit directory in reInitializePackageJson', () => {
+    test('with explicit directory in findPackageJson', () => {
       process.chdir(`${tmpObj.name}/project`);
       findPackageJson(`${tmpObj.name}/project/subproject`);
       const got = resolveConfig('VERSION');

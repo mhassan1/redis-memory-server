@@ -40,9 +40,16 @@ node_modules
 
 # Transpiled code
 lib
-packages/redis-memory-server-core/lib
 *.tsbuildinfo
 
 coverage
 .nyc_output
 package-lock.json
+
+# Yarn
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

@@ -1,12 +1,11 @@
 import { ChildProcess } from 'child_process';
 import * as tmp from 'tmp';
 import getPort from 'get-port';
-import { generateDbName, getUriBase, isNullOrUndefined } from './util/db_util';
+import { isNullOrUndefined } from './util/db_util';
 import RedisInstance from './util/RedisInstance';
 import { RedisBinaryOpts } from './util/RedisBinary';
-import { RedisMemoryInstancePropT, StorageEngineT, SpawnOptions } from './types';
+import { RedisMemoryInstancePropT, SpawnOptions } from './types';
 import debug from 'debug';
-import { deprecate } from 'util';
 
 const log = debug('RedisMS:RedisMemoryServer');
 
@@ -27,12 +26,7 @@ export interface RedisMemoryServerOptsT {
  */
 export interface StartupInstanceData {
   port: number;
-  dbPath?: string;
-  dbName: string;
   ip: string;
-  uri?: string;
-  storageEngine: StorageEngineT;
-  replSet?: string;
   tmpDir?: tmp.DirResult;
 }
 
@@ -40,8 +34,6 @@ export interface StartupInstanceData {
  * Information about the currently running instance
  */
 export interface RedisInstanceDataT extends StartupInstanceData {
-  dbPath: string; // re-declare, because in this interface it is *not* optional
-  uri: string; // same as above
   instance: RedisInstance;
   childProcess?: ChildProcess;
 }
@@ -97,7 +89,7 @@ export default class RedisMemoryServer {
 
     this.runningInstance = this._startUpInstance()
       .catch((err) => {
-        if (err.message === 'Redisd shutting down' || err === 'Redisd shutting down') {
+        if (err.message === 'redis-server shutting down' || err === 'redis-server shutting down') {
           log(`Redis did not start. Trying to start on another port one more time...`);
           if (this.opts.instance?.port) {
             this.opts.instance.port = null;
@@ -128,26 +120,12 @@ export default class RedisMemoryServer {
     const instOpts = this.opts.instance ?? {};
     const data: StartupInstanceData = {
       port: await getPort({ port: instOpts.port ?? undefined }), // do (null or undefined) to undefined
-      dbName: generateDbName(instOpts.dbName),
       ip: instOpts.ip ?? '127.0.0.1',
-      storageEngine: instOpts.storageEngine ?? 'ephemeralForTest',
-      replSet: instOpts.replSet,
-      dbPath: instOpts.dbPath,
       tmpDir: undefined,
     };
 
     if (instOpts.port != data.port) {
       log(`starting with port ${data.port}, since ${instOpts.port} was locked:`, data.port);
-    }
-
-    data.uri = await getUriBase(data.ip, data.port, data.dbName);
-    if (!data.dbPath) {
-      data.tmpDir = tmp.dirSync({
-        mode: 0o755,
-        prefix: 'redis-mem-',
-        unsafeCleanup: true,
-      });
-      data.dbPath = data.tmpDir.name;
     }
 
     log(`Starting Redis instance with following options: ${JSON.stringify(data)}`);
@@ -156,13 +134,9 @@ export default class RedisMemoryServer {
     // After that startup Redis instance
     const instance = await RedisInstance.run({
       instance: {
-        dbPath: data.dbPath,
         ip: data.ip,
         port: data.port,
-        storageEngine: data.storageEngine,
-        replSet: data.replSet,
         args: instOpts.args,
-        auth: instOpts.auth,
       },
       binary: this.opts.binary,
       spawn: this.opts.spawn,
@@ -170,8 +144,6 @@ export default class RedisMemoryServer {
 
     return {
       ...data,
-      dbPath: data.dbPath as string, // because otherwise the types would be incompatible
-      uri: data.uri as string, // same as above
       instance: instance,
       childProcess: instance.childProcess ?? undefined, // convert null | undefined to undefined
     };
@@ -234,36 +206,18 @@ export default class RedisMemoryServer {
   }
 
   /**
-   * Get a redis-URI for a different DataBase
-   * @param otherDbName Set this to "true" to generate a random DataBase name, otherwise a string to specify a DataBase name
+   * Get a redis host
    */
-  async getUri(otherDbName: string | boolean = false): Promise<string> {
-    const { uri, port, ip }: RedisInstanceDataT = await this.ensureInstance();
-
-    // IF true OR string
-    if (otherDbName) {
-      if (typeof otherDbName === 'string') {
-        // generate uri with provided DB name on existed DB instance
-        return getUriBase(ip, port, otherDbName);
-      }
-      // generate new random db name
-      return getUriBase(ip, port, generateDbName());
-    }
-
-    return uri;
+  async getHost(): Promise<string> {
+    return this.getIp();
   }
 
   /**
-   * Get a redis-URI for a different DataBase
-   * @param otherDbName Set this to "true" to generate a random DataBase name, otherwise a string to specify a DataBase name
-   * @deprecated
+   * Get a redis IP
    */
-  async getConnectionString(otherDbName: string | boolean = false): Promise<string> {
-    return deprecate(
-      this.getUri,
-      '"RedisMemoryReplSet.getConnectionString" is deprecated, use ".getUri"',
-      'MDEP001'
-    ).call(this, otherDbName);
+  async getIp(): Promise<string> {
+    const { ip }: RedisInstanceDataT = await this.ensureInstance();
+    return ip;
   }
 
   /**
@@ -273,23 +227,5 @@ export default class RedisMemoryServer {
   async getPort(): Promise<number> {
     const { port }: RedisInstanceDataT = await this.ensureInstance();
     return port;
-  }
-
-  /**
-   * Get the DB-Path of the currently running Instance
-   * Note: calls "ensureInstance"
-   */
-  async getDbPath(): Promise<string> {
-    const { dbPath }: RedisInstanceDataT = await this.ensureInstance();
-    return dbPath;
-  }
-
-  /**
-   * Get the DB-Name of the currently running Instance
-   * Note: calls "ensureInstance"
-   */
-  async getDbName(): Promise<string> {
-    const { dbName }: RedisInstanceDataT = await this.ensureInstance();
-    return dbName;
   }
 }

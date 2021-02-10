@@ -10,11 +10,7 @@ module.exports = {
   ],
   parserOptions: {
     sourceType: 'module',
-    useJSXTextNode: true,
-    project: [
-      path.resolve(__dirname, 'tsconfig.test.json'),
-      path.resolve(__dirname, 'packages/redis-memory-server-core/tsconfig.json'),
-    ],
+    useJSXTextNode: true
   },
   rules: {
     'no-underscore-dangle': 0,

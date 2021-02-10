@@ -1,25 +1,23 @@
-import { Db, RedisClient } from 'redis';
+import Redis from 'ioredis';
 import RedisMemoryServer, { RedisInstanceDataT } from '../RedisMemoryServer';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
-let con: RedisClient;
-let db: Db;
+let con: Redis.Redis;
 let redisServer: RedisMemoryServer;
 
 beforeAll(async () => {
   redisServer = new RedisMemoryServer();
-  const redisUri = await redisServer.getUri();
-  con = await RedisClient.connect(redisUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+  const host = await redisServer.getHost();
+  const port = await redisServer.getPort();
+  con = new Redis({
+    host,
+    port,
   });
-
-  db = con.db(await redisServer.getDbName());
 });
 
 afterAll(async () => {
   if (con) {
-    con.close();
+    con.disconnect();
   }
   if (redisServer) {
     await redisServer.stop();
@@ -28,11 +26,8 @@ afterAll(async () => {
 
 describe('Single redisServer', () => {
   it('should start redis server', async () => {
-    expect(db).toBeDefined();
-    const col = db.collection('test');
-    const result = await col.insertMany([{ a: 1 }, { b: 1 }]);
-    expect(result.result).toMatchSnapshot();
-    expect(await col.countDocuments({})).toBe(2);
+    expect(con).toBeDefined();
+    expect(await con.ping()).toBe('PONG');
   });
 
   it('should throw error on start if there is already a running instance', async () => {

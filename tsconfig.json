@@ -1,8 +1,20 @@
 {
   "compilerOptions": {
-    "composite": true
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "noEmit": false,
+    "target": "es5",
+    "module": "commonjs",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": false,
+    "strict": true,
+    "lib": ["esnext"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node", "jest"]
   },
-  "files": [],
-  "include": [],
-  "references": [{ "path": "./tsconfig.build.json" }, { "path": "./tsconfig.test.json" }]
+  "include": ["src/**/*"]
 }

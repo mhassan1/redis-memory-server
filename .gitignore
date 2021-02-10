@@ -40,7 +40,7 @@ node_modules
 
 # Transpiled code
 lib
-packages/mongodb-memory-server-core/lib
+packages/redis-memory-server-core/lib
 *.tsbuildinfo
 
 coverage

@@ -1,70 +1,77 @@
 {
-  "name": "lerna-monorepo",
-  "private": true,
-  "version": "0.0.0-development",
-  "description": "In-memory MongoDB Server. Designed with testing in mind, the server will allow you to connect your favourite ODM or client library to the MongoDB Server and run integration tests isolated from each other.",
-  "repository": "https://github.com/nodkz/mongodb-memory-server",
+  "name": "redis-memory-server",
+  "version": "6.6.9",
+  "description": "Redis Server for testing (core package, without autodownload). The server will allow you to connect your favourite ODM or client library to the Redis Server and run parallel integration tests isolated from each other.",
+  "main": "lib/index",
+  "types": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nodkz/redis-memory-server.git",
+    "directory": "packages/redis-memory-server-core"
+  },
+  "engines": {
+    "node": ">=10.15.0"
+  },
+  "files": [
+    "lib",
+    "scripts"
+  ],
+  "keywords": [
+    "redis",
+    "mock",
+    "stub",
+    "redis-prebuilt"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nodkz/redis-memory-server/issues"
+  },
+  "homepage": "https://github.com/nodkz/redis-memory-server",
   "devDependencies": {
-    "@commitlint/cli": "11.0.0",
-    "@commitlint/config-conventional": "11.0.0",
-    "@google/semantic-release-replace-plugin": "^1.0.1",
-    "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/commit-analyzer": "^8.0.1",
-    "@semantic-release/git": "^9.0.0",
-    "@semantic-release/github": "^7.1.1",
-    "@semantic-release/npm": "^7.0.6",
-    "@semantic-release/release-notes-generator": "^9.0.1",
-    "@types/jest": "26.0.14",
-    "@types/mongodb": "3.5.27",
-    "@types/node": "14.11.2",
-    "@typescript-eslint/eslint-plugin": "4.3.0",
-    "@typescript-eslint/parser": "4.3.0",
-    "commitlint": "11.0.0",
-    "cross-env": "^7.0.2",
-    "doctoc": "^1.4.0",
-    "eslint": "7.10.0",
-    "eslint-config-prettier": "6.12.0",
-    "eslint-plugin-prettier": "3.1.4",
-    "husky": "^4.3.0",
-    "jest": "26.4.2",
-    "lerna": "^3.22.1",
-    "lint-staged": "10.4.0",
-    "mongodb": "3.6.2",
-    "prettier": "2.1.2",
-    "semantic-release": "^17.1.2",
-    "ts-jest": "26.4.1",
-    "typescript": "4.0.3"
+    "@types/cross-spawn": "^6.0.2",
+    "@types/debug": "^4.1.5",
+    "@types/dedent": "^0.7.0",
+    "@types/find-cache-dir": "^3.2.0",
+    "@types/find-package-json": "^1.1.1",
+    "@types/lockfile": "^1.0.1",
+    "@types/md5-file": "^4.0.2",
+    "@types/mkdirp": "^1.0.1",
+    "@types/redis": "3.5.27",
+    "@types/semver": "7.3.4",
+    "@types/tar-stream": "^2.1.0",
+    "@types/uuid": "^8.0.0",
+    "@types/yauzl": "^2.9.1"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
+  "dependencies": {
+    "@types/tmp": "^0.2.0",
+    "camelcase": "^6.0.0",
+    "cross-spawn": "^7.0.3",
+    "debug": "^4.2.0",
+    "find-cache-dir": "^3.3.1",
+    "find-package-json": "^1.2.0",
+    "get-port": "^5.1.1",
+    "https-proxy-agent": "^5.0.0",
+    "lockfile": "^1.0.4",
+    "md5-file": "^5.0.0",
+    "mkdirp": "^1.0.4",
+    "semver": "^7.3.2",
+    "tar-stream": "^2.1.4",
+    "tmp": "^0.2.1",
+    "uuid": "8.3.0",
+    "yauzl": "^2.10.0"
   },
-  "lint-staged": {
-    "packages/**/*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "git add"
-    ],
-    "./README.md": [
-      "doctoc ./README.md",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged"
-    }
+  "optionalDependencies": {
+    "redis": "3.6.2"
   },
   "scripts": {
-    "test": "yarn --cwd packages/mongodb-memory-server-core run test",
-    "lint": "lerna run lint --stream --npm-client=yarn --no-prefix",
-    "eslint": "eslint 'packages/mongodb-memory-server-core/src/**/*.{js,ts}'",
-    "watch": "jest --env node --watch",
-    "jest": "jest --env node",
-    "build": "tsc --build tsconfig.build.json",
-    "semantic-release": "semantic-release",
-    "readme:toc": "doctoc ./README.md",
-    "postinstall": "yarn build"
+    "clean": "rimraf tmp lib coverage node_modules/.cache",
+    "build": "rimraf ./lib && tsc -p ./tsconfig.build.json",
+    "watch": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --watchAll",
+    "coverage": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --coverage",
+    "lint": "npm run eslint && npm run tscheck",
+    "eslint": "eslint -c ../../.eslintrc.js 'src/**/*.{js,ts}'",
+    "test": "npm run lint && npm run coverage",
+    "test:watch": "npm run watch",
+    "tscheck": "tsc --noEmit"
   }
 }

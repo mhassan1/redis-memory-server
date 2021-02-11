@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/mhassan1/redis-memory-server/compare/v0.2.0...v0.3.0) (2021-02-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* move package.json configurations out of config block
+
+### Features
+
+* move package.json configurations out of config block ([412c3d7](https://github.com/mhassan1/redis-memory-server/commit/412c3d7c08afa26e22395926ac866566f7926073))
+
 ## [0.2.0](https://github.com/mhassan1/redis-memory-server/compare/v0.1.0...v0.2.0) (2021-02-11)
 
 

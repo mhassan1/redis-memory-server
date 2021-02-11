@@ -1,6 +1,8 @@
 import camelCase from 'camelcase';
 import finder from 'find-package-json';
 import debug from 'debug';
+import { dirname, resolve } from 'path';
+import defaultsDeep from 'lodash.defaultsdeep';
 
 const log = debug('RedisMS:ResolveConfig');
 
@@ -21,13 +23,33 @@ let packageJsonConfig: {
   [key: string]: string;
 } = {};
 /**
- * Find the nearest package.json for the provided directory
+ * Traverse up the hierarchy and combine all package.json files
  * @param directory Set an custom directory to search the config in (default: process.cwd())
  */
 export function findPackageJson(directory?: string): void {
-  const finderIterator = finder(directory || process.cwd()).next();
-  log(`Using package.json at "${finderIterator.filename}"`);
-  packageJsonConfig = finderIterator.value?.config?.redisMemoryServer ?? {};
+  const _packageJsonConfig = {};
+  const finderIterator = finder(directory || process.cwd());
+  let foundPackageJson;
+  while ((foundPackageJson = finderIterator.next())) {
+    if (foundPackageJson.done) {
+      break;
+    }
+
+    const { value, filename } = foundPackageJson;
+
+    log(`Found package.json at "${filename}"`);
+    const ourConfig = value?.config?.redisMemoryServer || {};
+
+    // resolve relative paths
+    for (const relativePathProp of ['downloadDir', 'systemBinary']) {
+      if (ourConfig[relativePathProp]) {
+        ourConfig[relativePathProp] = resolve(dirname(filename), ourConfig[relativePathProp]);
+      }
+    }
+
+    defaultsDeep(_packageJsonConfig, ourConfig);
+  }
+  packageJsonConfig = _packageJsonConfig;
 }
 findPackageJson();
 

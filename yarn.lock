@@ -1016,6 +1016,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.defaultsdeep@npm:^4.6.6":
+  version: 4.6.6
+  resolution: "@types/lodash.defaultsdeep@npm:4.6.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 058f06c96acfd9c7bda6cb3ef0ee12bbaccaace3fcd24e0d179ee454a8d87a558487588c3c80d1e3a9263c3e5b403a1334e1004a1ce2adbeb867e45ea02e8dea
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
+  version: 4.14.168
+  resolution: "@types/lodash@npm:4.14.168"
+  checksum: 9a4e25f89fc035b9f0388f1f7be85e5eff49f9e6db0d93432c9a89fce0916f8a89db4e8290415f7ea02de6b00d3573826378dcb655b7b2d20530a6e8d6dd6fd0
+  languageName: node
+  linkType: hard
+
 "@types/minimatch@npm:*":
   version: 3.0.3
   resolution: "@types/minimatch@npm:3.0.3"
@@ -5144,6 +5160,13 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"lodash.defaultsdeep@npm:^4.6.1":
+  version: 4.6.1
+  resolution: "lodash.defaultsdeep@npm:4.6.1"
+  checksum: 143c2bfa5ee476efa38c05ae2cc4245d53d9ff988ac7667d1b7aa4a069cf5015475530d649d95ef325e4a47fa1d4d8f135d3ef14ad07c63e8847aeeec46f1ca9
+  languageName: node
+  linkType: hard
+
 "lodash.flatten@npm:^4.4.0":
   version: 4.4.0
   resolution: "lodash.flatten@npm:4.4.0"
@@ -6456,6 +6479,7 @@ fsevents@^2.1.2:
     "@types/ioredis": ^4.19.3
     "@types/jest": 26.0.14
     "@types/lockfile": ^1.0.1
+    "@types/lodash.defaultsdeep": ^4.6.6
     "@types/mkdirp": ^1.0.1
     "@types/node": 14.11.2
     "@types/rimraf": ^3.0.0
@@ -6482,6 +6506,7 @@ fsevents@^2.1.2:
     jest: ^26.6.3
     lint-staged: 10.4.0
     lockfile: ^1.0.4
+    lodash.defaultsdeep: ^4.6.1
     mkdirp: ^1.0.4
     prettier: 2.1.2
     rimraf: ^3.0.2

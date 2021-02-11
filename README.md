@@ -117,9 +117,10 @@ REDISMS_DISABLE_POSTINSTALL=1 # if you want to skip download binaries on `npm i`
 REDISMS_SYSTEM_BINARY=/usr/local/bin/redis-server # if you want to use an existing binary already on your system.
 ```
 
-### Options which can be set via package.json's `config` section
+### Options which can be set via `package.json`'s `config` section
 
-You can also use package.json's `config` section to configure installation process.
+You can also use `package.json`'s `config` section to configure the installation process.
+It will search up the hierarchy looking for `package.json` files and combine all configurations, where closer `package.json` files take precedence.
 Environment variables have higher priority than contents of package.json.
 
 ```json
@@ -137,17 +138,13 @@ Environment variables have higher priority than contents of package.json.
 }
 ```
 
-By default it uses the nearest (upwards) `package.json` to `process.cwd()`.
+By default, it starts looking for `package.json` files at `process.cwd()`.
 To change this:
 
 ```ts
 import { findPackageJson } from 'redis-memory-server/lib/util/resolve-config';
 
 findPackageJson('/custom/path');
-
-// OR
-
-process.chdir('/custom/path'); // not recommended
 ```
 
 ### Simple test with `ioredis`

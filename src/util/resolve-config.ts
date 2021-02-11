@@ -38,7 +38,7 @@ export function findPackageJson(directory?: string): void {
     const { value, filename } = foundPackageJson;
 
     log(`Found package.json at "${filename}"`);
-    const ourConfig = value?.config?.redisMemoryServer || {};
+    const ourConfig = value?.redisMemoryServer || {};
 
     // resolve relative paths
     for (const relativePathProp of ['downloadDir', 'systemBinary']) {

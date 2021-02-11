@@ -28,7 +28,7 @@ It works in Travis CI without additional `services` or `addons` in `.travis.yml`
   - [Simple server start](#simple-server-start)
   - [Available options for RedisMemoryServer](#available-options-for-redismemoryserver)
   - [Options which can be set via environment variables](#options-which-can-be-set-via-environment-variables)
-  - [Options which can be set via `package.json`'s `config` section](#options-which-can-be-set-via-packagejsons-config-section)
+  - [Options which can be set via `package.json`](#options-which-can-be-set-via-packagejson)
   - [Simple test with `ioredis`](#simple-test-with-ioredis)
   - [Debug mode](#debug-mode)
 - [Credits](#credits)
@@ -56,7 +56,7 @@ NOTE: Windows is not officially supported by this library, since it is not offic
 
 The default behavior is that version `stable` will be downloaded.
 You can set configurations via [environment variables](#options-which-can-be-set-via-environment-variables)
-or via [`package.json`'s `config` section](#options-which-can-be-set-via-packagejsons-config-section).
+or via [`package.json`](#options-which-can-be-set-via-packagejson).
 
 ## Usage
 
@@ -118,23 +118,21 @@ REDISMS_DISABLE_POSTINSTALL=1 # if you want to skip download binaries on install
 REDISMS_SYSTEM_BINARY=/usr/local/bin/redis-server # if you want to use an existing binary already on your system.
 ```
 
-### Options which can be set via `package.json`'s `config` section
+### Options which can be set via `package.json`
 
-You can also use `package.json`'s `config` section to configure the installation process.
+You can also use `package.json` to configure the installation process.
 It will search up the hierarchy looking for `package.json` files and combine all configurations, where closer `package.json` files take precedence.
 Environment variables have higher priority than contents of `package.json` files.
 
 ```json
 {
-  "config": {
-    "redisMemoryServer": {
-      "downloadDir": "/path/to/redis/binaries",
-      "version": "6.0.10",
-      "debug": "1",
-      "downloadMirror": "url",
-      "disablePostinstall": "1",
-      "systemBinary": "/usr/local/bin/redis-server"
-    }
+  "redisMemoryServer": {
+    "downloadDir": "/path/to/redis/binaries",
+    "version": "6.0.10",
+    "debug": "1",
+    "downloadMirror": "url",
+    "disablePostinstall": "1",
+    "systemBinary": "/usr/local/bin/redis-server"
   }
 }
 ```
@@ -154,7 +152,7 @@ Take a look at this [test file](https://github.com/mhassan1/redis-memory-server/
 
 ### Debug mode
 
-Debug mode can be enabled with an environment variable or in the `package.json` `config` section:
+Debug mode can be enabled with an environment variable or in `package.json`:
 
 ```sh
 REDISMS_DEBUG=1 # also available case-insensitive values: "on", "yes", "true"
@@ -164,10 +162,8 @@ or
 
 ```json
 {
-  "config": {
-    "redisMemoryServer": {
-      "debug": "1"
-    }
+  "redisMemoryServer": {
+    "debug": "1"
   }
 }
 ```

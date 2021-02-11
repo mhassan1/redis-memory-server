@@ -8,18 +8,14 @@ const mkdirAsync = promisify(fs.mkdir);
 const writeFileAsync = promisify(fs.writeFile);
 
 const outerPackageJson = {
-  config: {
-    redisMemoryServer: {
-      version: '3.0.0',
-      systemBinary: 'bin/redis-server',
-    },
+  redisMemoryServer: {
+    version: '3.0.0',
+    systemBinary: 'bin/redis-server',
   },
 };
 const innerPackageJson = {
-  config: {
-    redisMemoryServer: {
-      version: '4.0.0',
-    },
+  redisMemoryServer: {
+    version: '4.0.0',
   },
 };
 

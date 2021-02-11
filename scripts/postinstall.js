@@ -51,7 +51,7 @@ if (isModuleExists(redisBinaryModule)) {
     })
     .catch((err) => {
       console.log(`failed to download/install Redis binaries. The error: ${err}`);
-      process.exit(0);
+      process.exit(1);
     });
 } else {
   console.log("Can't resolve RedisBinary module");

@@ -21,6 +21,7 @@ export interface RedisBinaryCache {
 export interface RedisBinaryOpts {
   version?: string;
   downloadDir?: string;
+  systemBinary?: string;
 }
 
 export default class RedisBinary {
@@ -59,7 +60,9 @@ export default class RedisBinary {
    * @param options Options Configuring which binary to download and to which path
    * @returns The BinaryPath the binary has been downloaded to
    */
-  static async getDownloadPath(options: Required<RedisBinaryOpts>): Promise<string> {
+  static async getDownloadPath(
+    options: Required<Omit<RedisBinaryOpts, 'systemBinary'>>
+  ): Promise<string> {
     const { downloadDir, version } = options;
     // create downloadDir
     await mkdirp(downloadDir);

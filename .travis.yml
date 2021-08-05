@@ -1,11 +1,12 @@
-os:
-  - linux
-  - osx
 language: node_js
 node_js:
-  - 12
   - lts/*
   - node
+os: linux
+arch:
+  - arm64
+  - ppc64le
+  - s390x
 env:
   - YARN_GPG=no
 cache:

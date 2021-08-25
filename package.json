@@ -2,6 +2,7 @@
   "name": "redis-memory-server",
   "version": "0.7.0",
   "description": "Redis Server for testing. The server will allow you to connect your favorite client library to the Redis Server and run parallel integration tests isolated from each other.",
+  "bin": "bin/index.js",
   "main": "lib/index",
   "types": "lib/index.d.ts",
   "repository": {

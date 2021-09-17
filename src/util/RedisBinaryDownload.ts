@@ -57,7 +57,7 @@ export default class RedisBinaryDownload {
    * otherwise download it and then return the path
    */
   async getRedisServerPath(): Promise<string> {
-    const binaryName = 'redis-server';
+    const binaryName = process.platform === 'win32' ? 'redis-server.exe' : 'redis-server';
     const redisServerPath = path.resolve(this.downloadDir, this.version, binaryName);
 
     if (await this.locationExists(redisServerPath)) {
@@ -66,7 +66,11 @@ export default class RedisBinaryDownload {
 
     const redisArchive = await this.startDownload();
     const extractDir = await this.extract(redisArchive);
-    await this.makeInstall(extractDir);
+    if (process.platform === 'win32') {
+      await this.makeInstallWin32(extractDir);
+    } else {
+      await this.makeInstall(extractDir);
+    }
     fs.unlinkSync(redisArchive);
 
     if (await this.locationExists(redisServerPath)) {
@@ -345,6 +349,21 @@ export default class RedisBinaryDownload {
   }
 
   /**
+   * copy binary to parent folder and delete given extracted directory
+   * @param extractDir Extracted directory location
+   * @returns void
+   */
+  async makeInstallWin32(extractDir: string): Promise<void> {
+    const binaryName = 'redis-server.exe';
+    log(`makeInstallWin32(): ${extractDir}`);
+    await promisify(fs.copyFile)(
+      path.resolve(extractDir, '.', binaryName),
+      path.resolve(extractDir, '..', binaryName)
+    );
+    await promisify(rimraf)(extractDir);
+  }
+
+  /**
    * Test if the location given is already used
    * Does *not* dereference links
    * @param location The Path to test
@@ -353,7 +372,7 @@ export default class RedisBinaryDownload {
     try {
       await promisify(fs.lstat)(location);
       return true;
-    } catch (e) {
+    } catch (e: any) {
       if (e.code !== 'ENOENT') {
         throw e;
       }

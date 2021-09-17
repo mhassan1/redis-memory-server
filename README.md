@@ -53,7 +53,7 @@ On install, this package auto-downloads and compiles version `stable` of the `re
 ### Windows:
 
 
-Although Windows is not officially supported by Redis, but there is a downloadable version of [redis: 3.0.503 (June 28, 2016) for win64 by microsoft](https://github.com/ServiceStack/redis-windows#option-3-running-microsofts-native-port-of-redis). This is an older version. but it will work for most of the things like simple things like basic storage and pubsub. Probably what is missing or old is lua scripting.
+Although Windows is not officially supported by Redis, but there is a downloadable version of [redis: 3.0.503 (June 28, 2016) for win64 by microsoft](https://github.com/ServiceStack/redis-windows#option-3-running-microsofts-native-port-of-redis). This is an older version. but it will work for most of the simple tasks like basic storage and pubsub. Probably what is missing or old is lua scripting.
 
 ### Configuring which `redis-server` binary to use
 

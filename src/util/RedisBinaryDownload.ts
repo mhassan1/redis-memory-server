@@ -226,7 +226,7 @@ export default class RedisBinaryDownload {
             // "as any" because otherwise the "agent" wouldnt match
             if (response.statusCode != 200) {
               if (response.statusCode === 301 || response.statusCode === 302) {
-                const urlObject = url.parse(response.headers.location);
+                const urlObject = url.parse(response.headers.location as string);
 
                 if (urlObject.hostname) {
                   httpOptions.hostname = urlObject.hostname;

@@ -4,6 +4,8 @@ import fs from 'fs';
 import rimraf from 'rimraf';
 import https from 'https';
 import tar from 'tar';
+import extract from 'extract-zip';
+
 import RedisBinaryDownloadUrl from './RedisBinaryDownloadUrl';
 import { DownloadProgressT } from '../types';
 import { LATEST_VERSION } from './RedisBinary';
@@ -161,7 +163,9 @@ export default class RedisBinaryDownload {
       fs.mkdirSync(extractDir, { recursive: true });
     }
 
-    if (redisArchive.endsWith('.tar.gz')) {
+    if (redisArchive.endsWith('.zip')) {
+      await this.extractZip(redisArchive, extractDir);
+    } else if (redisArchive.endsWith('.tar.gz')) {
       await this.extractTarGz(redisArchive, extractDir);
     } else {
       throw new Error(
@@ -185,6 +189,15 @@ export default class RedisBinaryDownload {
       cwd: extractDir,
       strip: 1,
     });
+  }
+
+  /**
+   * Extract a .zip archive
+   * @param redisArchive Archive location
+   * @param extractDir Directory to extract to
+   */
+  async extractZip(redisArchive: string, extractDir: string): Promise<void> {
+    await extract(redisArchive, { dir: extractDir });
   }
 
   /**

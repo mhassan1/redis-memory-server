@@ -50,7 +50,12 @@ On install, this package auto-downloads and compiles version `stable` of the `re
 - Typescript: 3.8+ (if used)
 - `make`
 
-NOTE: Windows is not officially supported by this library, since it is not officially supported by Redis. PRs welcome!
+### Windows:
+
+windows it is not officially supported by Redis.  
+however there is a downloadable version of [redis: 3.0.503 (June 28, 2016) for win64 by microsoft](https://github.com/ServiceStack/redis-windows#option-3-running-microsofts-native-port-of-redis).
+it is an old redis but it generally works simple things like basic storage and pubsub.
+probably whats is missing or old is lua scripting.
 
 ### Configuring which `redis-server` binary to use
 

@@ -11,10 +11,6 @@
   "engines": {
     "node": ">=10.15.0"
   },
-  "files": [
-    "lib",
-    "scripts"
-  ],
   "keywords": [
     "redis",
     "mock",

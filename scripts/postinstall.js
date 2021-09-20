@@ -11,14 +11,9 @@ when first test run hits Redis binary downloading to the cache.
 */
 
 const { spawn } = require('child_process');
-const path = require('path');
 const exec = (commands) => {
   return new Promise((resolve, reject) => {
-    const tool = spawn(commands, {
-      stdio: 'inherit',
-      shell: true,
-      cwd: path.resolve(__dirname, '../'),
-    });
+    const tool = spawn(commands, { stdio: 'inherit', shell: true });
     tool.on('exit', (code) => {
       if (code !== 0) {
         reject();

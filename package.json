@@ -87,8 +87,8 @@
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall",
-    "clean": "npx rimraf tmp lib coverage node_modules/.cache",
-    "build": "npx rimraf ./lib && tsc -p ./tsconfig.build.json",
+    "clean": "rimraf tmp lib coverage node_modules/.cache",
+    "build": "rimraf ./lib && tsc -p ./tsconfig.build.json",
     "watch": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --watchAll",
     "coverage": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --coverage",
     "lint": "yarn eslint && yarn tscheck",

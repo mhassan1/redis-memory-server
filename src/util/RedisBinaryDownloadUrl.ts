@@ -29,7 +29,7 @@ export default class RedisBinaryDownloadUrl {
     }
 
     if (process.platform === 'win32') {
-      return 'https://github.com/ServiceStack/redis-windows/raw/master/downloads/redis-latest.zip';
+      return 'https://raw.githubusercontent.com/ServiceStack/redis-windows/master/downloads/redis-latest.zip';
     }
 
     const archive = await this.getArchiveName();

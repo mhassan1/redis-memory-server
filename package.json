@@ -94,7 +94,7 @@
     "clean": "rimraf tmp lib coverage node_modules/.cache",
     "build": "rimraf ./lib && tsc -p ./tsconfig.build.json",
     "watch": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --watchAll",
-    "coverage": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --coverage",
+    "coverage": "cross-env REDISMS_DOWNLOAD_DIR=./tmp jest --coverage --runInBand",
     "lint": "yarn eslint && yarn tscheck",
     "release": "standard-version",
     "prepublishOnly": "yarn build",

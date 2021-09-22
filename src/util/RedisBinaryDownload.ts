@@ -219,87 +219,62 @@ export default class RedisBinaryDownload {
       const fileStream = fs.createWriteStream(tempDownloadLocation);
 
       log(`trying to download https://${httpOptions.hostname}${httpOptions.path}`);
-
-      const get = () => {
-        https
-          .get(httpOptions as any, (response) => {
-            // "as any" because otherwise the "agent" wouldnt match
-            if (response.statusCode != 200) {
-              if (response.statusCode === 301 || response.statusCode === 302) {
-                const urlObject = url.parse(response.headers.location as string);
-
-                if (urlObject.hostname) {
-                  httpOptions.hostname = urlObject.hostname;
-                }
-                if (urlObject.port) {
-                  httpOptions.port = urlObject.port;
-                }
-                if (urlObject.path) {
-                  httpOptions.path = urlObject.path;
-                }
-
-                if (!urlObject.hostname || !urlObject.path) {
-                  return reject(
-                    new Error(`Provided incorrect download url: ${response.headers.location}`)
-                  );
-                }
-
-                return get();
-              }
-              if (response.statusCode === 404) {
-                reject(
-                  new Error(
-                    'Status Code is 404\n' +
-                      "This means that the requested version doesn't exist\n" +
-                      `  Used Url: "https://${httpOptions.hostname}${httpOptions.path}"\n` +
-                      "Try to use different version 'new RedisMemoryServer({ binary: { version: 'X.Y.Z' } })'\n"
-                  )
-                );
-                return;
-              }
-              reject(new Error('Status Code isnt 200!'));
+      https
+        .get(httpOptions as any, (response) => {
+          // "as any" because otherwise the "agent" wouldnt match
+          if (response.statusCode != 200) {
+            if (response.statusCode === 404) {
+              reject(
+                new Error(
+                  'Status Code is 404\n' +
+                    "This means that the requested version doesn't exist\n" +
+                    `  Used Url: "https://${httpOptions.hostname}${httpOptions.path}"\n` +
+                    "Try to use different version 'new RedisMemoryServer({ binary: { version: 'X.Y.Z' } })'\n"
+                )
+              );
               return;
             }
-            if (typeof response.headers['content-length'] != 'string') {
-              reject(new Error('Response header "content-length" is empty!'));
+            reject(new Error('Status Code isnt 200!'));
+            return;
+          }
+          if (typeof response.headers['content-length'] != 'string') {
+            reject(new Error('Response header "content-length" is empty!'));
+            return;
+          }
+          this.dlProgress.current = 0;
+          this.dlProgress.length = parseInt(response.headers['content-length'], 10);
+          this.dlProgress.totalMb = Math.round((this.dlProgress.length / 1048576) * 10) / 10;
+
+          response.pipe(fileStream);
+
+          fileStream.on('finish', async () => {
+            if (this.dlProgress.current < this.dlProgress.length) {
+              const downloadUrl =
+                this._downloadingUrl || `https://${httpOptions.hostname}/${httpOptions.path}`;
+              reject(
+                new Error(
+                  `Too small (${this.dlProgress.current} bytes) redis-server binary downloaded from ${downloadUrl}`
+                )
+              );
               return;
             }
-            this.dlProgress.current = 0;
-            this.dlProgress.length = parseInt(response.headers['content-length'], 10);
-            this.dlProgress.totalMb = Math.round((this.dlProgress.length / 1048576) * 10) / 10;
 
-            response.pipe(fileStream);
+            fileStream.close();
+            await promisify(fs.rename)(tempDownloadLocation, downloadLocation);
+            log(`moved ${tempDownloadLocation} to ${downloadLocation}`);
 
-            fileStream.on('finish', async () => {
-              if (this.dlProgress.current < this.dlProgress.length) {
-                const downloadUrl =
-                  this._downloadingUrl || `https://${httpOptions.hostname}/${httpOptions.path}`;
-                reject(
-                  new Error(
-                    `Too small (${this.dlProgress.current} bytes) redis-server binary downloaded from ${downloadUrl}`
-                  )
-                );
-                return;
-              }
-
-              fileStream.close();
-              await promisify(fs.rename)(tempDownloadLocation, downloadLocation);
-              log(`moved ${tempDownloadLocation} to ${downloadLocation}`);
-
-              resolve(downloadLocation);
-            });
-
-            response.on('data', (chunk: any) => {
-              this.printDownloadProgress(chunk);
-            });
-          })
-          .on('error', (e: Error) => {
-            // log it without having debug enabled
-            console.error(`Couldnt download ${httpOptions.path}!`, e.message);
-            reject(e);
+            resolve(downloadLocation);
           });
-      };
-      get();
+
+          response.on('data', (chunk: any) => {
+            this.printDownloadProgress(chunk);
+          });
+        })
+        .on('error', (e: Error) => {
+          // log it without having debug enabled
+          console.error(`Couldnt download ${httpOptions.path}!`, e.message);
+          reject(e);
+        });
     });
   }
 

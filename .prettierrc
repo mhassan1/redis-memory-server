@@ -1,4 +1,5 @@
 {
+  "endOfLine":"auto",
   "singleQuote": true,
   "arrowParens": "always",
   "tabWidth": 2,

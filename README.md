@@ -53,7 +53,13 @@ On install, this package auto-downloads and compiles version `stable` of the `re
 ### Windows:
 
 
-Although Windows is not officially supported by Redis, but there is a downloadable version of [redis: 3.0.503 (June 28, 2016) for win64 by microsoft](https://github.com/ServiceStack/redis-windows#option-3-running-microsofts-native-port-of-redis). This is an older version. but it will work for most of the simple tasks like basic storage and pubsub. Probably what is missing or old is lua scripting.
+Although Windows is not officially supported by Redis, but there is a downloadable version of [redis: 3.0.503 (June 28, 2016) for win64 by microsoft](https://github.com/ServiceStack/redis-windows#option-3-running-microsofts-native-port-of-redis). This is an older version. It will work for most of the simple tasks like basic storage and pubsub. Probably what is missing or old is lua scripting.
+
+Please note it will download the redis binary from github from URL: `https://github.com/ServiceStack/redis-windows/raw/master/downloads/redis-latest.zip`.
+
+Optionally, you could provide your own URL before running `npm install`:
+`npx cross-env REDISMS_DOWNLOAD_URL='https://github.com/ServiceStack/redis-windows/raw/master/downloads/redis-latest.zip' npm install`
+
 
 ### Configuring which `redis-server` binary to use
 

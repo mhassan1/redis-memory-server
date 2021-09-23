@@ -5,3 +5,21 @@
 export function isNullOrUndefined(val: unknown): val is null | undefined {
   return val === null || val === undefined;
 }
+
+/**
+ * Check whether a PID is alive
+ * @param pid PID
+ */
+export function isAlive(pid?: number): boolean {
+  if (isNullOrUndefined(pid)) {
+    return false;
+  }
+
+  try {
+    // code 0 doesn't actually kill anything (on all supported systems)
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}

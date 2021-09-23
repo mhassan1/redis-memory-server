@@ -99,7 +99,7 @@
     "release": "standard-version",
     "prepublishOnly": "yarn build",
     "eslint": "eslint '**/*.{js,ts}'",
-    "test": "git config auto.crlf false && git reset &&  npx yarn lint && yarn coverage --runInBand",
+    "test": "git config auto.crlf false && git reset –hard &&  npx yarn lint && yarn coverage --runInBand",
     "test:watch": "yarn watch",
     "tscheck": "tsc --noEmit"
   }

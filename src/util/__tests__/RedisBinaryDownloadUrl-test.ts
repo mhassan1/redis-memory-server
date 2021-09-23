@@ -56,7 +56,7 @@ describe('RedisBinaryDownloadUrl', () => {
           version: 'stable',
         });
         expect(await du.getDownloadUrl()).toBe(
-          'https://github.com/ServiceStack/redis-windows/raw/master/downloads/redis-latest.zip' // its version 3.0.503, no other version available, hopefully good enough for testing
+          'https://raw.githubusercontent.com/ServiceStack/redis-windows/master/downloads/redis-latest.zip' // its version 3.0.503, no other version available, hopefully good enough for testing
         );
       });
 
@@ -65,7 +65,7 @@ describe('RedisBinaryDownloadUrl', () => {
           version: '6.0.10',
         });
         expect(await du.getDownloadUrl()).toBe(
-          'https://github.com/ServiceStack/redis-windows/raw/master/downloads/redis-latest.zip' // its version 3.0.503, no other version available, hopefully good enough for testing
+          'https://raw.githubusercontent.com/ServiceStack/redis-windows/master/downloads/redis-latest.zip' // its version 3.0.503, no other version available, hopefully good enough for testing
         );
       });
     });

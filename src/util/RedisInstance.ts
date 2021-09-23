@@ -5,7 +5,7 @@ import RedisBinary from './RedisBinary';
 import { RedisBinaryOpts } from './RedisBinary';
 import { SpawnOptions, DebugFn, ErrorVoidCallback, EmptyVoidCallback } from '../types';
 import debug from 'debug';
-import { isNullOrUndefined } from './db_util';
+import { isNullOrUndefined, isAlive } from './db_util';
 import { lt } from 'semver';
 
 if (lt(process.version, '10.15.0')) {
@@ -124,11 +124,16 @@ export default class RedisInstance {
 
     /**
      * Function to De-Duplicate Code
-     * @param process The Process to kill
+     * @param _process The Process to kill
      * @param name the name used in the logs
      * @param debugfn the debug function
      */
-    async function kill_internal(process: ChildProcess, name: string, debugfn: DebugFn) {
+    async function kill_internal(_process: ChildProcess, name: string, debugfn: DebugFn) {
+      if (!isAlive(_process.pid)) {
+        debugfn('kill_internal given process PID is not alive anymore');
+        return;
+      }
+
       const timeoutTime = 1000 * 10;
       await new Promise((resolve, reject) => {
         let timeout = setTimeout(() => {
@@ -139,19 +144,19 @@ export default class RedisInstance {
                 'Enable debug logs for more information'
             );
           }
-          process.kill('SIGKILL');
+          _process.kill('SIGKILL');
           timeout = setTimeout(() => {
             debugfn('kill_internal timeout triggered again, rejecting');
             reject(new Error('Process didnt exit, enable debug for more information.'));
           }, timeoutTime);
         }, timeoutTime);
-        process.once(`exit`, (code, signal) => {
+        _process.once(`exit`, (code, signal) => {
           debugfn(`- ${name}: got exit signal, Code: ${code}, Signal: ${signal}`);
           clearTimeout(timeout);
           resolve(null);
         });
         debugfn(`- ${name}: send "SIGINT"`);
-        process.kill('SIGINT');
+        _process.kill('SIGINT');
       });
     }
 

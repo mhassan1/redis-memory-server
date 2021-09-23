@@ -40,8 +40,8 @@ export default class RedisBinary {
 
       log(`RedisBinary: found system binary path at "${systemBinary}"`);
       binaryPath = systemBinary;
-    } catch (err) {
-      log(`RedisBinary: can't find system binary at "${systemBinary}".\n${err.message}`);
+    } catch (err: any) {
+      log(`RedisBinary: can't find system binary at "${systemBinary}".\n${err?.message}`);
     }
 
     return binaryPath;

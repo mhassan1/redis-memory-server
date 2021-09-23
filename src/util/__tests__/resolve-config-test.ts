@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import * as tmp from 'tmp';
 import { promisify } from 'util';
 import resolveConfig, { findPackageJson } from '../resolve-config';
@@ -62,7 +63,9 @@ describe('resolveConfig', () => {
       const gotVersion = resolveConfig('VERSION');
       expect(gotVersion).toBe('3.0.0');
       const gotSystemBinary = resolveConfig('SYSTEM_BINARY');
-      expect(gotSystemBinary).toMatch(`${tmpObj.name}/project/bin/redis-server`);
+      expect(gotSystemBinary).toMatch(
+        path.resolve(path.join(tmpObj.name, 'project/bin/redis-server'))
+      );
     });
 
     test('in subproject', () => {
@@ -71,7 +74,9 @@ describe('resolveConfig', () => {
       const gotVersion = resolveConfig('VERSION');
       expect(gotVersion).toBe('4.0.0');
       const gotSystemBinary = resolveConfig('SYSTEM_BINARY');
-      expect(gotSystemBinary).toMatch(`${tmpObj.name}/project/bin/redis-server`);
+      expect(gotSystemBinary).toMatch(
+        path.resolve(path.join(tmpObj.name, 'project/bin/redis-server'))
+      );
     });
 
     test('with explicit directory in findPackageJson', () => {
@@ -80,7 +85,9 @@ describe('resolveConfig', () => {
       const gotVersion = resolveConfig('VERSION');
       expect(gotVersion).toBe('4.0.0');
       const gotSystemBinary = resolveConfig('SYSTEM_BINARY');
-      expect(gotSystemBinary).toMatch(`${tmpObj.name}/project/bin/redis-server`);
+      expect(gotSystemBinary).toMatch(
+        path.resolve(path.join(tmpObj.name, 'project/bin/redis-server'))
+      );
     });
   });
 });

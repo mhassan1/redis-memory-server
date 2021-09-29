@@ -21,9 +21,7 @@ describe('RedisBinaryDownloadUrl', () => {
         const du = new RedisBinaryDownloadUrl({
           version: 'stable',
         });
-        expect(await du.getDownloadUrl()).toBe(
-          'https://download.redis.io/releases/redis-stable.tar.gz'
-        );
+        expect(await du.getDownloadUrl()).toBe('https://download.redis.io/redis-stable.tar.gz');
       });
 
       it('6.0.10', async () => {

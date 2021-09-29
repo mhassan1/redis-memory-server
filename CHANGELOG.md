@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/mhassan1/redis-memory-server/compare/v0.4.0...v0.5.0) (2021-09-29)
+
+
+### Features
+
+* exclude `/releases` from download url for most recent stable ([dd8aa68](https://github.com/mhassan1/redis-memory-server/commit/dd8aa68f1627ccc29bc2785bbd9cb1e418b97912))
+
 ## [0.4.0](https://github.com/mhassan1/redis-memory-server/compare/v0.3.1...v0.4.0) (2021-09-23)
 
 ### Features

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.4.0](https://github.com/mhassan1/redis-memory-server/compare/v0.3.1...v0.4.0) (2021-09-23)
 
+### Features
+
+* add windows support ([6895a5ec](https://github.com/mhassan1/redis-memory-server/commit/6895a5ecda37c1ca2c1183541a221ef1cc1a8a0d))
+
 ### [0.3.1](https://github.com/mhassan1/redis-memory-server/compare/v0.3.0...v0.3.1) (2021-02-11)
 
 

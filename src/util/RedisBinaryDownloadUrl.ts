@@ -1,5 +1,6 @@
 import resolveConfig from './resolve-config';
 import debug from 'debug';
+import { LATEST_VERSION } from './RedisBinary';
 
 const log = debug('RedisMS:RedisBinaryDownloadUrl');
 
@@ -38,7 +39,9 @@ export default class RedisBinaryDownloadUrl {
     const mirror = resolveConfig('DOWNLOAD_MIRROR') ?? 'https://download.redis.io';
     log(`Using "${mirror}" as the mirror`);
 
-    return `${mirror}/releases/${archive}`;
+    return this.version === LATEST_VERSION
+      ? `${mirror}/${archive}`
+      : `${mirror}/releases/${archive}`;
   }
 
   /**

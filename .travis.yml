@@ -1,10 +1,12 @@
 language: node_js
 node_js:
-  - lts/*
+# TODO add this back once `nvs` on windows is fixed
+#  - lts/*
   - node
 os:
   - linux
   - windows
+dist: focal
 arch: arm64
 env:
   - YARN_GPG=no

@@ -2,6 +2,7 @@ import url from 'url';
 import path from 'path';
 import fs from 'fs';
 import rimraf from 'rimraf';
+import http from 'http';
 import https from 'https';
 import tar from 'tar';
 import extract from 'extract-zip';
@@ -26,6 +27,7 @@ interface HttpDownloadOptions {
   hostname: string;
   port: string;
   path: string;
+  protocol: string;
   method: 'GET' | 'POST';
   rejectUnauthorized?: boolean;
   agent: HttpsProxyAgent | undefined;
@@ -125,6 +127,7 @@ export default class RedisBinaryDownload {
       hostname: urlObject.hostname,
       port: urlObject.port || '443',
       path: urlObject.path,
+      protocol: urlObject.protocol || 'https:',
       method: 'GET',
       rejectUnauthorized: strictSsl,
       agent: proxy ? new HttpsProxyAgent(proxy) : undefined,
@@ -218,8 +221,8 @@ export default class RedisBinaryDownload {
     return new Promise((resolve, reject) => {
       const fileStream = fs.createWriteStream(tempDownloadLocation);
 
-      log(`trying to download https://${httpOptions.hostname}${httpOptions.path}`);
-      https
+      log(`trying to download ${httpOptions.protocol}//${httpOptions.hostname}${httpOptions.path}`);
+      (httpOptions.protocol === 'https:' ? https : http)
         .get(httpOptions as any, (response) => {
           // "as any" because otherwise the "agent" wouldnt match
           if (response.statusCode != 200) {
@@ -228,7 +231,7 @@ export default class RedisBinaryDownload {
                 new Error(
                   'Status Code is 404\n' +
                     "This means that the requested version doesn't exist\n" +
-                    `  Used Url: "https://${httpOptions.hostname}${httpOptions.path}"\n` +
+                    `  Used Url: "${httpOptions.protocol}//${httpOptions.hostname}${httpOptions.path}"\n` +
                     "Try to use different version 'new RedisMemoryServer({ binary: { version: 'X.Y.Z' } })'\n"
                 )
               );
@@ -250,7 +253,8 @@ export default class RedisBinaryDownload {
           fileStream.on('finish', async () => {
             if (this.dlProgress.current < this.dlProgress.length) {
               const downloadUrl =
-                this._downloadingUrl || `https://${httpOptions.hostname}/${httpOptions.path}`;
+                this._downloadingUrl ||
+                `${httpOptions.protocol}//${httpOptions.hostname}/${httpOptions.path}`;
               reject(
                 new Error(
                   `Too small (${this.dlProgress.current} bytes) redis-server binary downloaded from ${downloadUrl}`

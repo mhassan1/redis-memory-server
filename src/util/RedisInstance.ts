@@ -113,7 +113,9 @@ export default class RedisInstance {
 
     const redisBin = await RedisBinary.getPath(this.opts.binary);
     this.childProcess = this._launchRedisServer(redisBin);
-    this.killerProcess = this._launchKiller(process.pid, this.childProcess.pid);
+    if (this.childProcess.pid) {
+      this.killerProcess = this._launchKiller(process.pid, this.childProcess.pid);
+    }
 
     await launch;
     return this;

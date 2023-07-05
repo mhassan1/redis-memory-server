@@ -1,7 +1,7 @@
 import url from 'url';
 import path from 'path';
 import fs from 'fs';
-import rimraf from 'rimraf';
+import { rimraf } from 'rimraf';
 import http from 'http';
 import https from 'https';
 import tar from 'tar';
@@ -30,7 +30,7 @@ interface HttpDownloadOptions {
   protocol: string;
   method: 'GET' | 'POST';
   rejectUnauthorized?: boolean;
-  agent: HttpsProxyAgent | undefined;
+  agent: HttpsProxyAgent<string> | undefined;
 }
 
 /**
@@ -324,7 +324,7 @@ export default class RedisBinaryDownload {
       path.resolve(extractDir, 'src', binaryName),
       path.resolve(extractDir, '..', binaryName)
     );
-    await promisify(rimraf)(extractDir);
+    await rimraf(extractDir);
   }
 
   /**
@@ -339,7 +339,7 @@ export default class RedisBinaryDownload {
       path.resolve(extractDir, '.', binaryName),
       path.resolve(extractDir, '..', binaryName)
     );
-    await promisify(rimraf)(extractDir);
+    await rimraf(extractDir);
   }
 
   /**

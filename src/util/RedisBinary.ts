@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import LockFile from 'lockfile';
-import mkdirp from 'mkdirp';
+import { mkdirp } from 'mkdirp';
 import findCacheDir from 'find-cache-dir';
 import { execSync } from 'child_process';
 import { promisify } from 'util';

@@ -6,7 +6,7 @@ This script is used as postinstall hook.
 When you install redis-memory-server package
 npm or yarn downloads and compiles the latest version of redis binaries.
 
-It helps to skip timeout setup `jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;`
+It helps to skip timeout setup `jest.setTimeout(600000);`
 when first test run hits Redis binary downloading to the cache.
 */
 

@@ -4,7 +4,7 @@ import RedisBinary, { LATEST_VERSION } from '../RedisBinary';
 import RedisBinaryDownload from '../RedisBinaryDownload';
 
 tmp.setGracefulCleanup();
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
+jest.setTimeout(600000);
 
 const mockGetRedisServerPath = jest.fn().mockResolvedValue('/temp/path');
 

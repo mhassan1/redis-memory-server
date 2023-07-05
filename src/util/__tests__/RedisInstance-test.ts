@@ -2,7 +2,7 @@ import * as tmp from 'tmp';
 import { LATEST_VERSION } from '../RedisBinary';
 import RedisInstance from '../RedisInstance';
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
+jest.setTimeout(600000);
 tmp.setGracefulCleanup();
 
 let tmpDir: tmp.DirResult;
@@ -88,7 +88,7 @@ describe('RedisInstance', () => {
         process.kill(p, 0);
         return true;
       } catch (e) {
-        return e.code === 'EPERM';
+        return (e as Error & { code?: string }).code === 'EPERM';
       }
     }
 

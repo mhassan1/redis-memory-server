@@ -1,8 +1,8 @@
 import Redis from 'ioredis';
 import RedisMemoryServer, { RedisInstanceDataT } from '../RedisMemoryServer';
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
-let con: Redis.Redis;
+jest.setTimeout(600000);
+let con: Redis;
 let redisServer: RedisMemoryServer;
 
 beforeAll(async () => {

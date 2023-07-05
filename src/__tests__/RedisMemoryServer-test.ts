@@ -1,6 +1,6 @@
 import RedisMemoryServerType from '../RedisMemoryServer';
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
+jest.setTimeout(600000);
 
 describe('RedisMemoryServer', () => {
   let RedisMemoryServer: typeof RedisMemoryServerType;

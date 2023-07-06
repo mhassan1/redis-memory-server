@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/mhassan1/redis-memory-server/compare/v0.6.0...v0.7.0) (2023-07-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for node 14 and below
+
+### Features
+
+* drop support for node 14 and below ([09d5807](https://github.com/mhassan1/redis-memory-server/commit/09d5807b9cfb0d0f275d03989125aae1facd9f17))
+
 ## [0.6.0](https://github.com/mhassan1/redis-memory-server/compare/v0.5.0...v0.6.0) (2022-08-31)
 
 

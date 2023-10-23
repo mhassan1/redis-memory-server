@@ -12,4 +12,4 @@ env:
   - YARN_GPG=no
 cache:
   directories:
-    - .yarn/cache
+    - $HOME/.yarn/berry/cache

@@ -95,6 +95,14 @@ redisServer.getInstanceInfo();
 // when your script exits, a special process killer will shut it down for you
 ```
 
+### Start server via npx
+
+```bash
+npx redis-memory-server
+# OR
+REDISMS_PORT=6379 npx redis-memory-server
+```
+
 ### Available options for RedisMemoryServer
 
 All settings are optional.
@@ -176,6 +184,7 @@ or
   }
 }
 ```
+
 
 ## Credits
 

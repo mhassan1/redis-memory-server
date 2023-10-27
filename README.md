@@ -69,14 +69,6 @@ or via [`package.json`](#options-which-can-be-set-via-packagejson).
 
 ## Usage
 
-### Start server via npx
-
-```bash
-npx redis-memory-server
-# OR
-REDISMS_PORT=6379 npx redis-memory-server
-```
-
 ### Simple server start
 
 ```js
@@ -184,6 +176,15 @@ or
   }
 }
 ```
+
+### Start server via npx
+
+```bash
+npx redis-memory-server
+# OR
+REDISMS_PORT=6379 npx redis-memory-server
+```
+
 
 ## Credits
 

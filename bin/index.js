@@ -11,7 +11,10 @@ const RedisMemoryServer = require('../lib/index.js').default;
     },
   });
 
-  const host = await server.getHost();
+  const host = await server.getHost().catch((error) => {
+    console.error('Error:', error);
+    process.exit(1);
+  });
   const port = await server.getPort();
 
   console.log(`Redis server running at: ${host}:${port}`);

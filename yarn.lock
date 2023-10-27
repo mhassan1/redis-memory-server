@@ -5844,6 +5844,8 @@ __metadata:
     ts-jest: "npm:^29.1.1"
     typescript: "npm:~5.1.6"
     uuid: "npm:^8.3.2"
+  bin:
+    redis-memory-server: bin/index.js
   languageName: unknown
   linkType: soft
 

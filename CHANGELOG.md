@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/mhassan1/redis-memory-server/compare/v0.7.0...v0.8.0) (2023-10-27)
+
+
+### Features
+
+* start server via npx ([2a8dae2](https://github.com/mhassan1/redis-memory-server/commit/2a8dae2399d17c94d1fdecc0b363cf89ad51ff87))
+* start server via npx ([f2b2f6a](https://github.com/mhassan1/redis-memory-server/commit/f2b2f6a58c628933661b55d86927a9ccb7e9023a))
+* start server via npx ([9203c43](https://github.com/mhassan1/redis-memory-server/commit/9203c432789f57eacdff0204d09d18c571688405))
+
+
+### Bug Fixes
+
+* move `catch` block outside iife in `bin` ([d923c1a](https://github.com/mhassan1/redis-memory-server/commit/d923c1aa2a8ff637120fcde70dea985947cbaa57))
+
 ## [0.7.0](https://github.com/mhassan1/redis-memory-server/compare/v0.6.0...v0.7.0) (2023-07-06)
 
 

@@ -1,5 +1,6 @@
 import * as tmp from 'tmp';
 import fs from 'fs';
+import path from 'path';
 import RedisBinary, { LATEST_VERSION } from '../RedisBinary';
 import RedisBinaryDownload from '../RedisBinaryDownload';
 
@@ -78,6 +79,53 @@ describe('RedisBinary', () => {
       expect(accessSpy).toHaveBeenCalledWith('/usr/bin/redis-server', expect.any(Function));
 
       accessSpy.mockClear();
+    });
+  });
+
+  describe('_findCacheDirRecursively', () => {
+    const getRootPath = (...paths: string[]): string => path.join(tmpDir.name, ...paths);
+    const getWorkspacePath = (...paths: string[]): string =>
+      getRootPath('packages', 'package1', ...paths);
+
+    beforeEach(() => {
+      fs.mkdirSync(getRootPath('node_modules'));
+      fs.writeFileSync(getRootPath('package.json'), '{}');
+      fs.mkdirSync(getWorkspacePath(), { recursive: true });
+      fs.mkdirSync(getWorkspacePath('node_modules'));
+      fs.writeFileSync(getWorkspacePath('package.json'), '{}');
+    });
+
+    it('should find a cache directory when there is no existing one', () => {
+      expect(
+        RedisBinary._findCacheDirRecursively({
+          name: 'redis-memory-server',
+          cwd: getWorkspacePath(),
+        })
+      ).toEqual(getWorkspacePath('node_modules', '.cache', 'redis-memory-server'));
+    });
+
+    it('should find a cache directory when there is an existing one in a workspace', () => {
+      fs.mkdirSync(getWorkspacePath('node_modules', '.cache', 'redis-memory-server'), {
+        recursive: true,
+      });
+      expect(
+        RedisBinary._findCacheDirRecursively({
+          name: 'redis-memory-server',
+          cwd: getWorkspacePath(),
+        })
+      ).toEqual(getWorkspacePath('node_modules', '.cache', 'redis-memory-server'));
+    });
+
+    it('should find a cache directory when there is an existing one in the root', () => {
+      fs.mkdirSync(getRootPath('node_modules', '.cache', 'redis-memory-server'), {
+        recursive: true,
+      });
+      expect(
+        RedisBinary._findCacheDirRecursively({
+          name: 'redis-memory-server',
+          cwd: getWorkspacePath(),
+        })
+      ).toEqual(getRootPath('node_modules', '.cache', 'redis-memory-server'));
     });
   });
 });

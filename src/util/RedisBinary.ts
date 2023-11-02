@@ -132,7 +132,7 @@ export default class RedisBinary {
         (fs.existsSync(legacyDLDir)
           ? legacyDLDir
           : path.resolve(
-              findCacheDir({
+              this._findCacheDirRecursively({
                 name: 'redis-memory-server',
                 cwd: nodeModulesDLDir,
               }) || '',
@@ -188,5 +188,32 @@ export default class RedisBinary {
 
     log(`RedisBinary: redis-server binary path: "${binaryPath}"`);
     return binaryPath;
+  }
+
+  /**
+   * Find the named cache directory recursively, if it exists.
+   * If it's not found, fall back to the first `find-cache-dir` result.
+   * @param options Options
+   * @returns Cache directory
+   * @private
+   */
+  static _findCacheDirRecursively(options: { name: string; cwd: string }): string | undefined {
+    const firstResult = findCacheDir(options);
+    if (firstResult === undefined) {
+      return undefined;
+    }
+    let result: string = firstResult;
+    while (!fs.existsSync(result)) {
+      const nextResult = findCacheDir({
+        ...options,
+        // start above the previous `find-cache-dir` result
+        cwd: path.join(result, '..', '..', '..', '..'),
+      });
+      if (nextResult === undefined || nextResult === result) {
+        return firstResult;
+      }
+      result = nextResult;
+    }
+    return result;
   }
 }

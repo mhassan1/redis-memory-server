@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/mhassan1/redis-memory-server/compare/v0.8.0...v0.9.0) (2023-11-02)
+
+
+### Features
+
+* find cache dir recursively ([51477f4](https://github.com/mhassan1/redis-memory-server/commit/51477f4ae1feb1b66ce069f5b330e5fd5d9dfde7))
+
 ## [0.8.0](https://github.com/mhassan1/redis-memory-server/compare/v0.7.0...v0.8.0) (2023-10-27)
 
 

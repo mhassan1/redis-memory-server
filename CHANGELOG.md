@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/mhassan1/redis-memory-server/compare/v0.9.0...v0.10.0) (2023-11-27)
+
+
+### Features
+
+* specify `JEMALLOC_CONFIGURE_OPTS` ([2c6d05b](https://github.com/mhassan1/redis-memory-server/commit/2c6d05b05b8b094d762dcdcbef0451e0ebb6715f))
+
 ## [0.9.0](https://github.com/mhassan1/redis-memory-server/compare/v0.8.0...v0.9.0) (2023-11-02)
 
 

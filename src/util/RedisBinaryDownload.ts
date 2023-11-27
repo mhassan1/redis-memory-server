@@ -317,7 +317,11 @@ export default class RedisBinaryDownload {
   async makeInstall(extractDir: string): Promise<void> {
     const binaryName = 'redis-server';
     log(`makeInstall(): ${extractDir}`);
-    await promisify(exec)('make', {
+    const makeArgs: string[] = [
+      // https://github.com/redis/redis/issues/12759
+      'JEMALLOC_CONFIGURE_OPTS=--with-lg-vaddr=48',
+    ];
+    await promisify(exec)(`make${makeArgs.map((arg) => ` ${arg}`).join('')}`, {
       cwd: extractDir,
     });
     await promisify(fs.copyFile)(

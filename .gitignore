@@ -39,7 +39,7 @@ node_modules
 .node_repl_history
 
 # Transpiled code
-lib
+/lib
 *.tsbuildinfo
 
 coverage

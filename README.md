@@ -21,18 +21,21 @@ When you terminate your script or call `stop()`, the Redis server(s) will be aut
 
 It works in Travis CI without additional `services` or `addons` in `.travis.yml`.
 
-- [Installation](#installation)
-  - [Requirements](#requirements)
-  - [Configuring which redis-server binary to use](#configuring-which-redis-server-binary-to-use)
-- [Usage](#usage)
-  - [Simple server start](#simple-server-start)
-  - [Available options for RedisMemoryServer](#available-options-for-redismemoryserver)
-  - [Options which can be set via environment variables](#options-which-can-be-set-via-environment-variables)
-  - [Options which can be set via `package.json`](#options-which-can-be-set-via-packagejson)
-  - [Simple test with `ioredis`](#simple-test-with-ioredis)
-  - [Debug mode](#debug-mode)
-- [Credits](#credits)
-- [License](#license)
+- [Redis In-Memory Server](#redis-in-memory-server)
+  - [Installation](#installation)
+    - [Requirements](#requirements)
+    - [Windows:](#windows)
+    - [Configuring which `redis-server` binary to use](#configuring-which-redis-server-binary-to-use)
+  - [Usage](#usage)
+    - [Simple server start](#simple-server-start)
+    - [Start server via npx](#start-server-via-npx)
+    - [Available options for RedisMemoryServer](#available-options-for-redismemoryserver)
+    - [Options which can be set via environment variables](#options-which-can-be-set-via-environment-variables)
+    - [Options which can be set via `package.json`](#options-which-can-be-set-via-packagejson)
+    - [Simple test with `ioredis`](#simple-test-with-ioredis)
+    - [Debug mode](#debug-mode)
+  - [Credits](#credits)
+  - [License](#license)
 
 ## Installation
 

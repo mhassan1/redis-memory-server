@@ -116,6 +116,7 @@ const redisServer = new RedisMemoryServer({
     port: number, // by default, choose any free port
     ip: string, // by default, '127.0.0.1'; for binding to all IP addresses set it to `::,0.0.0.0`,
     args: [], // by default, no additional arguments; any additional command line arguments for `redis-server`
+    killTimeout: number, // by default, 10_000 (milliseconds) for SIGINT or SIGKILL to succeed; some environments may require more time for shutdown
   },
   binary: {
     version: string, // by default, 'stable'

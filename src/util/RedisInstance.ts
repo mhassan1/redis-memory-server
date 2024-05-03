@@ -20,6 +20,7 @@ export interface RedisServerOps {
     port?: number;
     ip?: string; // for binding to all IP addresses set it to `::,0.0.0.0`, by default '127.0.0.1'
     args?: string[];
+    killTimeout?: number;
   };
 
   // redis binary options
@@ -124,6 +125,8 @@ export default class RedisInstance {
   async kill(): Promise<RedisInstance> {
     this.debug('Called RedisInstance.kill():');
 
+    const timeoutTime = this.opts.instance.killTimeout ?? 1000 * 10;
+
     /**
      * Function to De-Duplicate Code
      * @param _process The Process to kill
@@ -136,13 +139,12 @@ export default class RedisInstance {
         return;
       }
 
-      const timeoutTime = 1000 * 10;
       await new Promise((resolve, reject) => {
         let timeout = setTimeout(() => {
           debugfn('kill_internal timeout triggered, trying SIGKILL');
           if (!debug.enabled('RedisMS:RedisInstance')) {
             console.warn(
-              'An Process didnt exit with signal "SIGINT" within 10 seconds, using "SIGKILL"!\n' +
+              `An Process didnt exit with signal "SIGINT" within ${timeoutTime} milliseconds, using "SIGKILL"!\n` +
                 'Enable debug logs for more information'
             );
           }

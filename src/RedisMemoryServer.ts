@@ -137,6 +137,7 @@ export default class RedisMemoryServer {
         ip: data.ip,
         port: data.port,
         args: instOpts.args,
+        killTimeout: instOpts.killTimeout,
       },
       binary: this.opts.binary,
       spawn: this.opts.spawn,

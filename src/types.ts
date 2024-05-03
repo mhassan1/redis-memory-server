@@ -15,6 +15,7 @@ export { SpawnOptions } from 'child_process';
 export interface RedisMemoryInstancePropBaseT {
   args?: string[];
   port?: number | null;
+  killTimeout?: number;
 }
 
 export interface RedisMemoryInstancePropT extends RedisMemoryInstancePropBaseT {

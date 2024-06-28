@@ -1,11 +1,10 @@
 import fs from 'fs';
+import { access, mkdir } from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import LockFile from 'lockfile';
-import { mkdirp } from 'mkdirp';
 import findCacheDir from 'find-cache-dir';
 import { execSync } from 'child_process';
-import { promisify } from 'util';
 import RedisBinaryDownload from './RedisBinaryDownload';
 import resolveConfig from './resolve-config';
 import debug from 'debug';
@@ -36,7 +35,7 @@ export default class RedisBinary {
     let binaryPath = '';
 
     try {
-      await promisify(fs.access)(systemBinary);
+      await access(systemBinary);
 
       log(`RedisBinary: found system binary path at "${systemBinary}"`);
       binaryPath = systemBinary;
@@ -65,7 +64,7 @@ export default class RedisBinary {
   ): Promise<string> {
     const { downloadDir, version } = options;
     // create downloadDir
-    await mkdirp(downloadDir);
+    await mkdir(downloadDir, { recursive: true });
 
     /** Lockfile path */
     const lockfile = path.resolve(downloadDir, `${version}.lock`);

@@ -1,5 +1,6 @@
 import * as tmp from 'tmp';
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import path from 'path';
 import RedisBinary, { LATEST_VERSION } from '../RedisBinary';
 import RedisBinaryDownload from '../RedisBinaryDownload';
@@ -32,11 +33,11 @@ describe('RedisBinary', () => {
 
   describe('getPath', () => {
     it('should get system binary from the environment', async () => {
-      const accessSpy = jest.spyOn(fs, 'access');
+      const accessSpy = jest.spyOn(fsPromises, 'access');
       process.env.REDISMS_SYSTEM_BINARY = '/usr/local/bin/redis-server';
       await RedisBinary.getPath();
 
-      expect(accessSpy).toHaveBeenCalledWith('/usr/local/bin/redis-server', expect.any(Function));
+      expect(accessSpy).toHaveBeenCalledWith('/usr/local/bin/redis-server');
 
       accessSpy.mockClear();
       delete process.env.REDISMS_SYSTEM_BINARY;
@@ -73,10 +74,10 @@ describe('RedisBinary', () => {
 
   describe('getSystemPath', () => {
     it('should use system binary if option is passed.', async () => {
-      const accessSpy = jest.spyOn(fs, 'access');
+      const accessSpy = jest.spyOn(fsPromises, 'access');
       await RedisBinary.getSystemPath('/usr/bin/redis-server'); // ignoring return, because this depends on the host system
 
-      expect(accessSpy).toHaveBeenCalledWith('/usr/bin/redis-server', expect.any(Function));
+      expect(accessSpy).toHaveBeenCalledWith('/usr/bin/redis-server');
 
       accessSpy.mockClear();
     });

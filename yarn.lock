@@ -1389,15 +1389,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mkdirp@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@types/mkdirp@npm:2.0.0"
-  dependencies:
-    mkdirp: "npm:*"
-  checksum: 4ffc9905d84ec76b256f706fb4b4eedd0f63f260c0b3d3c7b13172582d046dfd0db661f314e8e15e1fb81d8b7ae5507a38dcf4a4f425c945d113694d6bb5c3a9
-  languageName: node
-  linkType: hard
-
 "@types/ms@npm:*":
   version: 0.7.31
   resolution: "@types/ms@npm:0.7.31"
@@ -5133,15 +5124,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:*, mkdirp@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "mkdirp@npm:3.0.1"
-  bin:
-    mkdirp: dist/cjs/src/bin.js
-  checksum: 9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
-  languageName: node
-  linkType: hard
-
 "mkdirp@npm:^1.0.3":
   version: 1.0.4
   resolution: "mkdirp@npm:1.0.4"
@@ -5816,7 +5798,6 @@ __metadata:
     "@types/jest": "npm:^29.5.2"
     "@types/lockfile": "npm:^1.0.2"
     "@types/lodash.defaultsdeep": "npm:^4.6.7"
-    "@types/mkdirp": "npm:^2.0.0"
     "@types/node": "npm:^18.11.9"
     "@types/rimraf": "npm:^4.0.5"
     "@types/semver": "npm:^7.5.0"
@@ -5844,7 +5825,6 @@ __metadata:
     lint-staged: "npm:^13.2.3"
     lockfile: "npm:^1.0.4"
     lodash.defaultsdeep: "npm:^4.6.1"
-    mkdirp: "npm:^3.0.1"
     prettier: "npm:^2.8.8"
     rimraf: "npm:^5.0.1"
     semver: "npm:^7.5.3"

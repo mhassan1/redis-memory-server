@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/mhassan1/redis-memory-server/compare/v0.10.0...v0.11.0) (2024-07-01)
+
+
+### Features
+
+* remove usage of mkdirp package ([#36](https://github.com/mhassan1/redis-memory-server/issues/36)) ([206d7e0](https://github.com/mhassan1/redis-memory-server/commit/206d7e077219507dec1ae053e2f1a46425fd3866))
+
 ## [0.10.0](https://github.com/mhassan1/redis-memory-server/compare/v0.9.0...v0.10.0) (2023-11-27)
 
 

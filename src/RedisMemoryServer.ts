@@ -100,7 +100,7 @@ export default class RedisMemoryServer {
       })
       .catch((err) => {
         if (!debug.enabled('RedisMS:RedisMemoryServer')) {
-          console.warn('Starting the instance failed, please enable debug for more infomation');
+          console.warn('Starting the instance failed, please enable debug for more information.');
         }
         throw err;
       });

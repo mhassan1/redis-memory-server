@@ -1,6 +1,6 @@
 import { ChildProcess } from 'child_process';
 import * as tmp from 'tmp';
-import getPort from 'get-port';
+import getPort, { clearLockedPorts } from 'get-port';
 import { isNullOrUndefined } from './util/db_util';
 import RedisInstance from './util/RedisInstance';
 import { RedisBinaryOpts } from './util/RedisBinary';
@@ -118,6 +118,10 @@ export default class RedisMemoryServer {
   async _startUpInstance(): Promise<RedisInstanceDataT> {
     /** Shortcut to this.opts.instance */
     const instOpts = this.opts.instance ?? {};
+
+    // Unlock previously used ports that are no longer in use
+    clearLockedPorts();
+
     const data: StartupInstanceData = {
       port: await getPort({ port: instOpts.port ?? undefined }), // do (null or undefined) to undefined
       ip: instOpts.ip ?? '127.0.0.1',

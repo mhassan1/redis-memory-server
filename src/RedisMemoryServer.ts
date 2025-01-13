@@ -1,6 +1,6 @@
 import { ChildProcess } from 'child_process';
 import * as tmp from 'tmp';
-import getPort from 'get-port';
+import { getPortPromise as getPort } from 'portfinder';
 import { isNullOrUndefined } from './util/db_util';
 import RedisInstance from './util/RedisInstance';
 import { RedisBinaryOpts } from './util/RedisBinary';

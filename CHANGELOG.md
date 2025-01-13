@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/mhassan1/redis-memory-server/compare/v0.11.0...v0.12.0) (2025-01-13)
+
+
+### Bug Fixes
+
+* keep same port after stopping and restarting ([4d565d5](https://github.com/mhassan1/redis-memory-server/commit/4d565d51ea24e6310393900452305300021de2fd))
+* resolving a typo in a debug message ([74b4c29](https://github.com/mhassan1/redis-memory-server/commit/74b4c297313c884754e75b04d264bed4832ae14f))
+
 ## [0.11.0](https://github.com/mhassan1/redis-memory-server/compare/v0.10.0...v0.11.0) (2024-07-01)
 
 

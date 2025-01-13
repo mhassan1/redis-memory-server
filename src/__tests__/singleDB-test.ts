@@ -37,4 +37,10 @@ describe('Single redisServer', () => {
       'Redis instance already in status startup/running/error. Use debug for more info.'
     );
   });
+
+  it('should keep the same port after stopping and restarting', async () => {
+    await redisServer.stop();
+    await redisServer.start();
+    expect(await con.ping()).toBe('PONG');
+  });
 });

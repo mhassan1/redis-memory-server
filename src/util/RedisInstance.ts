@@ -6,11 +6,6 @@ import { RedisBinaryOpts } from './RedisBinary';
 import { SpawnOptions, DebugFn, ErrorVoidCallback, EmptyVoidCallback } from '../types';
 import debug from 'debug';
 import { isNullOrUndefined, isAlive } from './db_util';
-import { lt } from 'semver';
-
-if (lt(process.version, '10.15.0')) {
-  console.warn('Using NodeJS below 10.15.0');
-}
 
 const log = debug('RedisMS:RedisInstance');
 

@@ -1,6 +1,6 @@
 import { ChildProcess } from 'child_process';
 import * as tmp from 'tmp';
-import { getPortPromise as getPort } from 'portfinder';
+import getPort from 'get-port';
 import { isNullOrUndefined } from './util/db_util';
 import RedisInstance from './util/RedisInstance';
 import { RedisBinaryOpts } from './util/RedisBinary';
@@ -42,6 +42,12 @@ export default class RedisMemoryServer {
   runningInstance: Promise<RedisInstanceDataT> | null = null;
   instanceInfoSync: RedisInstanceDataT | null = null;
   opts: RedisMemoryServerOptsT;
+  /**
+   * @private
+   */
+  _previousInstanceConfig?: {
+    port: number;
+  };
 
   /**
    * Create an Redis-Memory-Sever Instance
@@ -119,7 +125,8 @@ export default class RedisMemoryServer {
     /** Shortcut to this.opts.instance */
     const instOpts = this.opts.instance ?? {};
     const data: StartupInstanceData = {
-      port: await getPort({ port: instOpts.port ?? undefined }), // do (null or undefined) to undefined
+      port:
+        this._previousInstanceConfig?.port ?? (await getPort({ port: instOpts.port ?? undefined })), // do (null or undefined) to undefined
       ip: instOpts.ip ?? '127.0.0.1',
       tmpDir: undefined,
     };
@@ -168,6 +175,7 @@ export default class RedisMemoryServer {
 
     this.runningInstance = null;
     this.instanceInfoSync = null;
+    this._previousInstanceConfig = { port };
 
     if (tmpDir) {
       log(`Removing tmpDir ${tmpDir.name}`);

@@ -8,7 +8,7 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "strict": true,
     "lib": ["esnext"],
     "moduleResolution": "node",

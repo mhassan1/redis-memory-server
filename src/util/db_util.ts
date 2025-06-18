@@ -19,6 +19,7 @@ export function isAlive(pid?: number): boolean {
     // code 0 doesn't actually kill anything (on all supported systems)
     process.kill(pid, 0);
     return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     return false;
   }

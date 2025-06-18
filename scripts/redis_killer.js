@@ -23,6 +23,7 @@ function isAlive(pid) {
   try {
     process.kill(pid, 0);
     return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     return false;
   }

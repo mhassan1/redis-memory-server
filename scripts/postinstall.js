@@ -1,4 +1,4 @@
-/* eslint @typescript-eslint/no-var-requires: 0 */
+/* eslint @typescript-eslint/no-require-imports: 0 */
 
 /*
 This script is used as postinstall hook.
@@ -13,6 +13,7 @@ when first test run hits Redis binary downloading to the cache.
 function isModuleExists(name) {
   try {
     return !!require.resolve(name);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return false;
   }

@@ -1,6 +1,8 @@
 import resolveConfig from './resolve-config';
 import debug from 'debug';
 import { LATEST_VERSION } from './RedisBinary';
+import https from 'https';
+import { IncomingMessage } from 'http';
 
 const log = debug('RedisMS:RedisBinaryDownloadUrl');
 
@@ -30,7 +32,25 @@ export default class RedisBinaryDownloadUrl {
     }
 
     if (process.platform === 'win32') {
-      return 'https://raw.githubusercontent.com/ServiceStack/redis-windows/master/downloads/redis-latest.zip';
+      log('Getting download link from Memurai');
+      const response = await new Promise<IncomingMessage>((resolve, reject) => {
+        https.get(
+          'https://www.memurai.com/api/request-download-link?version=windows-redis',
+          (response) => {
+            if (response.statusCode !== 200) {
+              return reject(new Error("Memurai Status code isn't 200!"));
+            }
+            resolve(response);
+          }
+        );
+      });
+      const chunks = [];
+      for await (const chunk of response) {
+        chunks.push(chunk);
+      }
+      const { url } = JSON.parse(Buffer.concat(chunks).toString());
+      log('Got download link from Memurai');
+      return url;
     }
 
     const archive = await this.getArchiveName();
@@ -49,9 +69,6 @@ export default class RedisBinaryDownloadUrl {
    * Version independent
    */
   async getArchiveName(): Promise<string> {
-    if (process.platform === 'win32') {
-      return 'redis-latest.zip';
-    }
     return `redis-${this.version}.tar.gz`;
   }
 }

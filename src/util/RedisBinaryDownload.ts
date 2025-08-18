@@ -11,7 +11,7 @@ import RedisBinaryDownloadUrl from './RedisBinaryDownloadUrl';
 import { DownloadProgressT } from '../types';
 import { LATEST_VERSION } from './RedisBinary';
 import { HttpsProxyAgent } from 'https-proxy-agent';
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import { promisify } from 'util';
 import './resolve-config';
 import debug from 'debug';
@@ -59,7 +59,7 @@ export default class RedisBinaryDownload {
    * otherwise download it and then return the path
    */
   async getRedisServerPath(): Promise<string> {
-    const binaryName = process.platform === 'win32' ? 'redis-server.exe' : 'redis-server';
+    const binaryName = process.platform === 'win32' ? 'memurai.exe' : 'redis-server';
     const redisServerPath = path.resolve(this.downloadDir, this.version, binaryName);
 
     if (await this.locationExists(redisServerPath)) {
@@ -174,6 +174,8 @@ export default class RedisBinaryDownload {
       await this.extractZip(redisArchive, extractDir);
     } else if (redisArchive.endsWith('.tar.gz')) {
       await this.extractTarGz(redisArchive, extractDir);
+    } else if (redisArchive.endsWith('.msi')) {
+      await this.extractMsi(redisArchive, extractDir);
     } else {
       throw new Error(
         `RedisBinaryDownload: unsupported archive ${redisArchive} (downloaded from ${
@@ -205,6 +207,15 @@ export default class RedisBinaryDownload {
    */
   async extractZip(redisArchive: string, extractDir: string): Promise<void> {
     await extract(redisArchive, { dir: extractDir });
+  }
+
+  /**
+   * Extract a .msi archive
+   * @param redisArchive Archive location
+   * @param extractDir Directory to extract to
+   */
+  async extractMsi(redisArchive: string, extractDir: string): Promise<void> {
+    await promisify(execFile)('msiexec', ['/quiet', '/a', redisArchive, `TARGETDIR=${extractDir}`]);
   }
 
   /**
@@ -337,12 +348,15 @@ export default class RedisBinaryDownload {
    * @returns void
    */
   async makeInstallWin32(extractDir: string): Promise<void> {
-    const binaryName = 'redis-server.exe';
     log(`makeInstallWin32(): ${extractDir}`);
-    await promisify(fs.copyFile)(
-      path.resolve(extractDir, '.', binaryName),
-      path.resolve(extractDir, '..', binaryName)
-    );
+    await new Promise<void>((resolve, reject) => {
+      fs.cp(
+        path.resolve(extractDir, 'Memurai'),
+        path.resolve(extractDir, '..'),
+        { recursive: true },
+        (err: Error | null) => (err ? reject(err) : resolve())
+      );
+    });
     await rimraf(extractDir);
   }
 

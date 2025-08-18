@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/mhassan1/redis-memory-server/compare/v0.12.1...v0.13.0) (2025-08-18)
+
+
+### Features
+
+* switch to memurai on windows ([c839bec](https://github.com/mhassan1/redis-memory-server/commit/c839bec794f6b98b3331401fd1e6764dad995d3b))
+
 ### [0.12.1](https://github.com/mhassan1/redis-memory-server/compare/v0.12.0...v0.12.1) (2025-01-14)
 
 

@@ -180,7 +180,7 @@ export default class RedisBinaryDownload {
     } else {
       throw new Error(
         `RedisBinaryDownload: unsupported archive ${redisArchive} (downloaded from ${
-          this._downloadingUrl ?? 'unkown'
+          this._downloadingUrl ?? 'unknown'
         }). Broken archive from Redis Provider?`
       );
     }

@@ -114,6 +114,7 @@ const redisServer = new RedisMemoryServer({
   binary: {
     version: string, // by default, 'stable'
     downloadDir: string, // by default, 'node_modules/.cache/redis-memory-server/redis-binaries'
+    ignoreDownloadCache: boolean, // by default, false
     systemBinary: string, // by default, undefined
   },
   autoStart: boolean, // by default, true
@@ -125,6 +126,7 @@ const redisServer = new RedisMemoryServer({
 ```sh
 REDISMS_DOWNLOAD_DIR=/path/to/redis/binaries # default target download directory
 REDISMS_VERSION=6.0.10 # default version to download
+REDISMS_IGNORE_DOWNLOAD_CACHE=1 # if you want to ignore already downloaded/installed binaries
 REDISMS_DEBUG=1 # debug mode, also available case-insensitive values: "on" "yes" "true"
 REDISMS_DOWNLOAD_MIRROR=host # your mirror host to download the redis binary
 REDISMS_DOWNLOAD_URL=url # full URL to download the redis binary
@@ -143,6 +145,7 @@ Environment variables have higher priority than contents of `package.json` files
   "redisMemoryServer": {
     "downloadDir": "/path/to/redis/binaries",
     "version": "6.0.10",
+    "ignoreDownloadCache": "1",
     "debug": "1",
     "downloadMirror": "url",
     "disablePostinstall": "1",

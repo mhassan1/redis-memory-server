@@ -31,6 +31,18 @@ describe('RedisBinaryDownload', () => {
     expect(du.httpDownload).not.toHaveBeenCalled();
   });
 
+  it('should not skip download if binary tar exists but "ignoreDownloadCache" is set', async () => {
+    const du = new RedisBinaryDownload({
+      ignoreDownloadCache: true,
+    });
+    du.httpDownload = jest.fn();
+    du.locationExists = jest.fn().mockReturnValue(true);
+
+    await du.download('https://fastdl.redis.org/osx/redis-osx-ssl-x86_64-3.6.3.tgz');
+
+    expect(du.httpDownload).toHaveBeenCalled();
+  });
+
   it('should pick up proxy from env vars', async () => {
     process.env['yarn_https-proxy'] = 'http://user:pass@proxy:8080';
 

@@ -56,6 +56,7 @@ describe('RedisBinary', () => {
       expect(RedisBinaryDownload).toHaveBeenCalledWith({
         downloadDir: tmpDir.name,
         version,
+        ignoreDownloadCache: false,
       });
 
       expect(mockGetRedisServerPath).toHaveBeenCalledTimes(1);
@@ -69,6 +70,14 @@ describe('RedisBinary', () => {
       });
 
       expect(mockGetRedisServerPath).toHaveBeenCalledTimes(1);
+
+      await RedisBinary.getPath({
+        downloadDir: tmpDir.name,
+        version,
+        ignoreDownloadCache: true,
+      });
+
+      expect(mockGetRedisServerPath).toHaveBeenCalledTimes(2);
     });
   });
 

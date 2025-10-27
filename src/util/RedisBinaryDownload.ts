@@ -21,6 +21,7 @@ const log = debug('RedisMS:RedisBinaryDownload');
 export interface RedisBinaryDownloadOpts {
   version?: string;
   downloadDir?: string;
+  ignoreDownloadCache?: boolean;
 }
 
 interface HttpDownloadOptions {
@@ -42,10 +43,12 @@ export default class RedisBinaryDownload {
 
   downloadDir: string;
   version: string;
+  ignoreDownloadCache: boolean;
 
-  constructor({ downloadDir, version }: RedisBinaryDownloadOpts) {
+  constructor({ downloadDir, version, ignoreDownloadCache }: RedisBinaryDownloadOpts) {
     this.version = version ?? LATEST_VERSION;
     this.downloadDir = path.resolve(downloadDir || 'redis-download');
+    this.ignoreDownloadCache = ignoreDownloadCache ?? false;
     this.dlProgress = {
       current: 0,
       length: 0,
@@ -63,8 +66,11 @@ export default class RedisBinaryDownload {
     const redisServerPath = path.resolve(this.downloadDir, this.version, binaryName);
 
     if (await this.locationExists(redisServerPath)) {
-      log('Redis binary found, skipping download and install');
-      return redisServerPath;
+      if (!this.ignoreDownloadCache) {
+        log('Redis binary found, skipping download and install');
+        return redisServerPath;
+      }
+      log('Redis binary found, but ignoring due to "ignoreDownloadCache" being set');
     }
 
     const redisArchive = await this.startDownload();
@@ -144,8 +150,11 @@ export default class RedisBinaryDownload {
     log(`Downloading${proxy ? ` via proxy ${proxy}` : ''}: "${downloadUrl}"`);
 
     if (await this.locationExists(downloadLocation)) {
-      log('Already downloaded archive found, skipping download');
-      return downloadLocation;
+      if (!this.ignoreDownloadCache) {
+        log('Already downloaded archive found, skipping download');
+        return downloadLocation;
+      }
+      log('Already downloaded archive found, but ignoring due to "ignoreDownloadCache" being set');
     }
 
     this._downloadingUrl = downloadUrl;

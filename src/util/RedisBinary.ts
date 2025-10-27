@@ -6,7 +6,7 @@ import LockFile from 'lockfile';
 import findCacheDir from 'find-cache-dir';
 import { execSync } from 'child_process';
 import RedisBinaryDownload from './RedisBinaryDownload';
-import resolveConfig from './resolve-config';
+import resolveConfig, { envToBool } from './resolve-config';
 import debug from 'debug';
 
 const log = debug('RedisMS:RedisBinary');
@@ -21,6 +21,7 @@ export interface RedisBinaryOpts {
   version?: string;
   downloadDir?: string;
   systemBinary?: string;
+  ignoreDownloadCache?: boolean;
 }
 
 export default class RedisBinary {
@@ -62,7 +63,7 @@ export default class RedisBinary {
   static async getDownloadPath(
     options: Required<Omit<RedisBinaryOpts, 'systemBinary'>>
   ): Promise<string> {
-    const { downloadDir, version } = options;
+    const { downloadDir, version, ignoreDownloadCache } = options;
     // create downloadDir
     await mkdir(downloadDir, { recursive: true });
 
@@ -88,10 +89,11 @@ export default class RedisBinary {
     });
 
     // check cache if it got already added to the cache
-    if (!this.getCachePath(version)) {
+    if (!this.getCachePath(version) || ignoreDownloadCache) {
       const downloader = new RedisBinaryDownload({
         downloadDir,
         version,
+        ignoreDownloadCache,
       });
       this.cache[version] = await downloader.getRedisServerPath();
     }
@@ -139,6 +141,7 @@ export default class RedisBinary {
             )),
       version: resolveConfig('VERSION') || LATEST_VERSION,
       systemBinary: resolveConfig('SYSTEM_BINARY'),
+      ignoreDownloadCache: envToBool(resolveConfig('IGNORE_DOWNLOAD_CACHE')),
     };
 
     /** Provided Options combined with the Default Options */
@@ -171,7 +174,7 @@ export default class RedisBinary {
       }
     }
 
-    if (!binaryPath) {
+    if (!binaryPath && !options.ignoreDownloadCache) {
       binaryPath = this.getCachePath(options.version);
     }
 

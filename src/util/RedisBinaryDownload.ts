@@ -63,6 +63,7 @@ export default class RedisBinaryDownload {
     const redisServerPath = path.resolve(this.downloadDir, this.version, binaryName);
 
     if (await this.locationExists(redisServerPath)) {
+      log('Redis binary found, skipping download and install');
       return redisServerPath;
     }
 

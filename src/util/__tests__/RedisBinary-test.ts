@@ -62,6 +62,13 @@ describe('RedisBinary', () => {
 
       expect(RedisBinary.cache[version]).toBeDefined();
       expect(RedisBinary.cache[version]).toEqual(binPath);
+
+      await RedisBinary.getPath({
+        downloadDir: tmpDir.name,
+        version,
+      });
+
+      expect(mockGetRedisServerPath).toHaveBeenCalledTimes(1);
     });
   });
 

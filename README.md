@@ -12,6 +12,8 @@ compiles the `redis-server` binary, and saves it to a cache folder.
 On starting a new instance of the in-memory server, if the binary cannot be found,
 it will be downloaded and compiled; thus, the first run may take some time.
 All further runs will be fast because they will use the downloaded binaries.
+NOTE: If no `version` is specified (or `version` is set to `stable`),
+the binary will not be updated after the first run.
 
 This package automatically downloads source code from [https://download.redis.io/](https://download.redis.io/).
 
@@ -26,6 +28,7 @@ It works in Travis CI without additional `services` or `addons` in `.travis.yml`
     - [Requirements](#requirements)
     - [Windows](#windows)
     - [Configuring which `redis-server` binary to use](#configuring-which-redis-server-binary-to-use)
+      - [Using the `stable` version of the binary](#using-the-stable-version-of-the-binary)
   - [Usage](#usage)
     - [Simple server start](#simple-server-start)
     - [Start server via npx](#start-server-via-npx)
@@ -63,6 +66,26 @@ Currently, it is not possible to specify a particular version of Memurai or Redi
 The default behavior is that version `stable` will be downloaded.
 You can set configurations via [environment variables](#options-which-can-be-set-via-environment-variables)
 or via [`package.json`](#options-which-can-be-set-via-packagejson).
+
+#### Using the `stable` version of the binary
+
+After the first install of the `stable` version on a machine,
+the binary will not be automatically updated on that machine.
+
+This may be a concern because:
+1. the install is less deterministic
+2. some machines could have vulnerable versions
+
+If this is a concern, either:
+1. specify a `version` other than `stable`
+2. forcibly update the `stable` binary on demand using a command like:
+```bash
+REDISMS_IGNORE_DOWNLOAD_CACHE=1 yarn rebuild redis-memory-server
+# OR
+REDISMS_IGNORE_DOWNLOAD_CACHE=1 npm rebuild redis-memory-server
+```
+3. specify the `ignoreDownloadCache` option
+   (NOTE: this will make installs/runs slower)
 
 ## Usage
 

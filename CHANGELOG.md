@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.0](https://github.com/mhassan1/redis-memory-server/compare/v0.13.0...v0.14.0) (2025-10-27)
+
+
+### Features
+
+* add support for `ignoreDownloadCache` option ([013c480](https://github.com/mhassan1/redis-memory-server/commit/013c4806d5c8944617a564ece69d4adf41274965))
+
+
+### Bug Fixes
+
+* add debug log for already available binary ([e4ef4cc](https://github.com/mhassan1/redis-memory-server/commit/e4ef4cc93ef332fcfc97b69c678fd47b1f170733))
+* fix typo in `RedisBinaryDownload` ([8e39a83](https://github.com/mhassan1/redis-memory-server/commit/8e39a832ee8904e10a02a207e7e183c5a7bd8d87))
+
 ## [0.13.0](https://github.com/mhassan1/redis-memory-server/compare/v0.12.1...v0.13.0) (2025-08-18)
 
 

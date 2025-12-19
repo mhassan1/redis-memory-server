@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.1](https://github.com/mhassan1/redis-memory-server/compare/v0.14.0...v0.14.1) (2025-12-19)
+
+
+### Bug Fixes
+
+* add support for spaces in windows target directory ([4b047a2](https://github.com/mhassan1/redis-memory-server/commit/4b047a242e1f183c26fa0e94d7422d66f9550dc9))
+
 ## [0.14.0](https://github.com/mhassan1/redis-memory-server/compare/v0.13.0...v0.14.0) (2025-10-27)
 
 

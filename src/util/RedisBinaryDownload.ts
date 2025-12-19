@@ -15,6 +15,7 @@ import { exec, execFile } from 'child_process';
 import { promisify } from 'util';
 import './resolve-config';
 import debug from 'debug';
+import { tmpdir } from 'os';
 
 const log = debug('RedisMS:RedisBinaryDownload');
 
@@ -225,7 +226,27 @@ export default class RedisBinaryDownload {
    * @param extractDir Directory to extract to
    */
   async extractMsi(redisArchive: string, extractDir: string): Promise<void> {
-    await promisify(execFile)('msiexec', ['/quiet', '/a', redisArchive, `TARGETDIR=${extractDir}`]);
+    if (!extractDir.includes(' ')) {
+      await promisify(execFile)('msiexec', [
+        '/quiet',
+        '/a',
+        redisArchive,
+        `TARGETDIR=${extractDir}`,
+      ]);
+    } else {
+      const tmpExtractDir = tmpdir();
+      await promisify(execFile)('msiexec', [
+        '/quiet',
+        '/a',
+        redisArchive,
+        `TARGETDIR=${tmpExtractDir}`,
+      ]);
+      await rimraf(path.resolve(extractDir, 'Memurai'));
+      await promisify(fs.rename)(
+        path.resolve(tmpExtractDir, 'Memurai'),
+        path.resolve(extractDir, 'Memurai')
+      );
+    }
   }
 
   /**

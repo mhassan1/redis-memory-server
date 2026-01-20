@@ -4,7 +4,7 @@ import fs from 'fs';
 import { rimraf } from 'rimraf';
 import http from 'http';
 import https from 'https';
-import tar from 'tar';
+import * as tar from 'tar';
 import extract from 'extract-zip';
 
 import RedisBinaryDownloadUrl from './RedisBinaryDownloadUrl';

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.15.0](https://github.com/mhassan1/redis-memory-server/compare/v0.14.1...v0.15.0) (2026-01-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for node 16 and below
+
+### Features
+
+* bump vulnerable dependency `tar` ([19f2e5f](https://github.com/mhassan1/redis-memory-server/commit/19f2e5ff823e023af570f6ec4d8111a15c615f4b))
+* drop support for node 16 and below ([6f65a8d](https://github.com/mhassan1/redis-memory-server/commit/6f65a8d578af0448b4754dea2b19736eb7769142))
+
 ### [0.14.1](https://github.com/mhassan1/redis-memory-server/compare/v0.14.0...v0.14.1) (2025-12-19)
 
 

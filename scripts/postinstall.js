@@ -29,7 +29,7 @@ rc.findPackageJson(process.env.INIT_CWD);
 
 const envDisablePostinstall = rc.default('DISABLE_POSTINSTALL');
 
-if (typeof envDisablePostinstall === 'string' && rc.envToBool(envDisablePostinstall)) {
+if (rc.envToBool(envDisablePostinstall)) {
   console.log('Download is skipped by REDISMS_DISABLE_POSTINSTALL variable');
   process.exit(0);
 }

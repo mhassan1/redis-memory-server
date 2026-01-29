@@ -78,9 +78,9 @@ If this is a concern, either:
 1. specify a `version` other than `stable`
 2. forcibly update the `stable` binary on demand using a command like:
 ```bash
-REDISMS_IGNORE_DOWNLOAD_CACHE=1 yarn rebuild redis-memory-server
+REDISMS_IGNORE_DOWNLOAD_CACHE=true yarn rebuild redis-memory-server
 # OR
-REDISMS_IGNORE_DOWNLOAD_CACHE=1 npm rebuild redis-memory-server
+REDISMS_IGNORE_DOWNLOAD_CACHE=true npm rebuild redis-memory-server
 ```
 3. specify the `ignoreDownloadCache` option
    (NOTE: this will make installs/runs slower)
@@ -147,13 +147,15 @@ const redisServer = new RedisMemoryServer({
 ```sh
 REDISMS_DOWNLOAD_DIR=/path/to/redis/binaries # default target download directory
 REDISMS_VERSION=6.0.10 # default version to download
-REDISMS_IGNORE_DOWNLOAD_CACHE=1 # if you want to ignore already downloaded/installed binaries
-REDISMS_DEBUG=1 # debug mode, also available case-insensitive values: "on" "yes" "true"
+REDISMS_IGNORE_DOWNLOAD_CACHE=true
+REDISMS_DEBUG=true
 REDISMS_DOWNLOAD_MIRROR=host # your mirror host to download the redis binary
 REDISMS_DOWNLOAD_URL=url # full URL to download the redis binary
-REDISMS_DISABLE_POSTINSTALL=1 # if you want to skip download binaries on install
+REDISMS_DISABLE_POSTINSTALL=true
 REDISMS_SYSTEM_BINARY=/usr/local/bin/redis-server # if you want to use an existing binary already on your system.
 ```
+
+NOTE: Boolean-ish values can be any of these (case-insensitive): `true`, `on`, `yes`, `1`.
 
 ### Options which can be set via `package.json`
 
@@ -166,14 +168,16 @@ Environment variables have higher priority than contents of `package.json` files
   "redisMemoryServer": {
     "downloadDir": "/path/to/redis/binaries",
     "version": "6.0.10",
-    "ignoreDownloadCache": "1",
-    "debug": "1",
+    "ignoreDownloadCache": true,
+    "debug": true,
     "downloadMirror": "url",
-    "disablePostinstall": "1",
+    "disablePostinstall": true,
     "systemBinary": "/usr/local/bin/redis-server"
   }
 }
 ```
+
+NOTE: Boolean-ish values can be any of these (case-insensitive): `true`, `"true"`, `"on"`, `"yes"`, `1`, `"1"`.
 
 By default, it starts looking for `package.json` files at `process.cwd()`.
 To change this:
@@ -193,7 +197,7 @@ Take a look at this [test file](https://github.com/mhassan1/redis-memory-server/
 Debug mode can be enabled with an environment variable or in `package.json`:
 
 ```sh
-REDISMS_DEBUG=1 # also available case-insensitive values: "on", "yes", "true"
+REDISMS_DEBUG=true
 ```
 
 or
@@ -201,7 +205,7 @@ or
 ```json
 {
   "redisMemoryServer": {
-    "debug": "1"
+    "debug": true
   }
 }
 ```

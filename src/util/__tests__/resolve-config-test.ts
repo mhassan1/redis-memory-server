@@ -17,6 +17,7 @@ const outerPackageJson = {
 const innerPackageJson = {
   redisMemoryServer: {
     version: '4.0.0',
+    ignoreDownloadCache: true,
   },
 };
 
@@ -77,6 +78,8 @@ describe('resolveConfig', () => {
       expect(gotSystemBinary).toMatch(
         path.resolve(path.join(tmpObj.name, 'project/bin/redis-server'))
       );
+      const gotIgnoreDownloadCache = resolveConfig('IGNORE_DOWNLOAD_CACHE');
+      expect(gotIgnoreDownloadCache).toBe('true');
     });
 
     test('with explicit directory in findPackageJson', () => {

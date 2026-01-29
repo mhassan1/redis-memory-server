@@ -20,7 +20,7 @@ export function setDefaultValue(key: string, value: string): void {
 }
 
 let packageJsonConfig: {
-  [key: string]: string;
+  [key: string]: unknown;
 } = {};
 /**
  * Traverse up the hierarchy and combine all package.json files
@@ -62,7 +62,7 @@ export default function resolveConfig(variableName: string): string | undefined 
     process.env[`${ENV_CONFIG_PREFIX}${variableName}`] ??
     packageJsonConfig?.[camelCase(variableName)] ??
     defaultValues.get(variableName)
-  );
+  )?.toString();
 }
 
 /**

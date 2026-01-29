@@ -18,6 +18,7 @@ const innerPackageJson = {
   redisMemoryServer: {
     version: '4.0.0',
     ignoreDownloadCache: true,
+    configProvider: './redisMemoryServerConfig.js',
   },
 };
 
@@ -50,6 +51,10 @@ describe('resolveConfig', () => {
           `${tmpName}/project/subproject/package.json`,
           JSON.stringify(innerPackageJson)
         ),
+        writeFileAsync(
+          `${tmpName}/project/subproject/redisMemoryServerConfig.js`,
+          `module.exports = { ignoreDownloadCache: false }`,
+        ),
       ]);
     });
 
@@ -79,7 +84,7 @@ describe('resolveConfig', () => {
         path.resolve(path.join(tmpObj.name, 'project/bin/redis-server'))
       );
       const gotIgnoreDownloadCache = resolveConfig('IGNORE_DOWNLOAD_CACHE');
-      expect(gotIgnoreDownloadCache).toBe('true');
+      expect(gotIgnoreDownloadCache).toBe('false');
     });
 
     test('with explicit directory in findPackageJson', () => {

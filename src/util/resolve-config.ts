@@ -39,6 +39,15 @@ export function findPackageJson(directory?: string): void {
     log(`Found package.json at "${filename}"`);
     const ourConfig = value?.redisMemoryServer || {};
 
+    // resolve dynamic config
+    if (ourConfig.configProvider) {
+      const configProviderPath = require.resolve(ourConfig.configProvider, {
+        paths: [dirname(filename)],
+      });
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      Object.assign(ourConfig, require(configProviderPath));
+    }
+
     // resolve relative paths
     for (const relativePathProp of ['downloadDir', 'systemBinary']) {
       if (ourConfig[relativePathProp]) {

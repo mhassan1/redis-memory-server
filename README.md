@@ -172,7 +172,8 @@ Environment variables have higher priority than contents of `package.json` files
     "debug": true,
     "downloadMirror": "url",
     "disablePostinstall": true,
-    "systemBinary": "/usr/local/bin/redis-server"
+    "systemBinary": "/usr/local/bin/redis-server",
+    "configProvider": "some-package/redisMemoryServerConfig.js"
   }
 }
 ```
@@ -186,6 +187,14 @@ To change this:
 import { findPackageJson } from 'redis-memory-server/lib/util/resolve-config';
 
 findPackageJson('/custom/path');
+```
+
+The `configProvider` configuration can be used to dynamically load configurations from another package (e.g. `some-package/redisMemoryServerConfig.js`) or file (e.g. `./redisMemoryServerConfig.js`), where the target file looks like this:
+```js
+module.exports = {
+  version: '6.0.10',
+  // ...
+}
 ```
 
 ### Simple test with `ioredis`

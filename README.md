@@ -52,7 +52,7 @@ On install, this package auto-downloads and compiles version `stable` of the `re
 
 ### Requirements
 
-- NodeJS: 16+
+- NodeJS: 18+
 - Typescript: 3.8+ (if used)
 - `make`
 

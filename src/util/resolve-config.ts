@@ -2,7 +2,6 @@ import camelCase from 'camelcase';
 import finder from 'find-package-json';
 import debug from 'debug';
 import { dirname, resolve } from 'path';
-import defaultsDeep from 'lodash.defaultsdeep';
 
 const log = debug('RedisMS:ResolveConfig');
 
@@ -27,7 +26,7 @@ let packageJsonConfig: {
  * @param directory Set an custom directory to search the config in (default: process.cwd())
  */
 export function findPackageJson(directory?: string): void {
-  const _packageJsonConfig = {};
+  let _packageJsonConfig = {};
   const finderIterator = finder(directory || process.cwd());
   let foundPackageJson;
   while ((foundPackageJson = finderIterator.next())) {
@@ -47,7 +46,7 @@ export function findPackageJson(directory?: string): void {
       }
     }
 
-    defaultsDeep(_packageJsonConfig, ourConfig);
+    _packageJsonConfig = Object.assign({}, ourConfig, _packageJsonConfig);
   }
   packageJsonConfig = _packageJsonConfig;
 }

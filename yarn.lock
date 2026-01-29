@@ -1548,22 +1548,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.defaultsdeep@npm:^4.6.7":
-  version: 4.6.7
-  resolution: "@types/lodash.defaultsdeep@npm:4.6.7"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10c0/e33573c620f23e84c1ed620d929aafd02722bf4ebabebd170df0e0d423461ba0055c7e9f108da4f742feee1f30cef88ddc4c41bf4b443d07231ce1918746e870
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:*":
-  version: 4.14.195
-  resolution: "@types/lodash@npm:4.14.195"
-  checksum: 10c0/6d733276df592614a0943a0053056140398b3c263cdf2557d4301b3a47b07ff561926cb9339a4725acbc7d8766f91ded218df11e0a4288cee369eafb5141d94d
-  languageName: node
-  linkType: hard
-
 "@types/minimist@npm:^1.2.0":
   version: 1.2.2
   resolution: "@types/minimist@npm:1.2.2"
@@ -5015,13 +4999,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.defaultsdeep@npm:^4.6.1":
-  version: 4.6.1
-  resolution: "lodash.defaultsdeep@npm:4.6.1"
-  checksum: 10c0/0031ca3055d5482fc2e9b55d0ee174a3e956039996fac52dbe94ca67eb50bb72ffc75d0eb86bcc782fefc597ebbc1798df941f27382bec23138e53180427700b
-  languageName: node
-  linkType: hard
-
 "lodash.isarguments@npm:^3.1.0":
   version: 3.1.0
   resolution: "lodash.isarguments@npm:3.1.0"
@@ -6091,7 +6068,6 @@ __metadata:
     "@types/ioredis": "npm:^5.0.0"
     "@types/jest": "npm:^30.0.0"
     "@types/lockfile": "npm:^1.0.2"
-    "@types/lodash.defaultsdeep": "npm:^4.6.7"
     "@types/node": "npm:^18.11.9"
     "@types/rimraf": "npm:^4.0.5"
     "@types/semver": "npm:^7.5.0"
@@ -6118,7 +6094,6 @@ __metadata:
     jest: "npm:^30.0.0"
     lint-staged: "npm:^16.1.2"
     lockfile: "npm:^1.0.4"
-    lodash.defaultsdeep: "npm:^4.6.1"
     prettier: "npm:^3.5.3"
     rimraf: "npm:^5.0.1"
     semver: "npm:^7.5.3"

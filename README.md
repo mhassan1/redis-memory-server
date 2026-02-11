@@ -48,7 +48,7 @@ yarn add redis-memory-server --dev
 npm install redis-memory-server --save-dev
 ```
 
-On install, this package auto-downloads and compiles version `stable` of the `redis-server` binary to `node_modules/.cache/redis-binaries`.
+On install, this package auto-downloads and compiles version `stable` of the `redis-server` binary to `node_modules/.cache/redis-memory-server/redis-binaries`.
 
 ### Requirements
 

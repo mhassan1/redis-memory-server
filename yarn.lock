@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 9
   cacheKey: 10c0
 
 "@aashutoshrathi/word-wrap@npm:^1.2.3":
@@ -6087,6 +6087,9 @@ __metadata:
     ts-jest: "npm:^29.1.1"
     typescript: "npm:~5.8.3"
     uuid: "npm:^8.3.2"
+  dependenciesMeta:
+    unrs-resolver:
+      built: true
   bin:
     redis-memory-server: bin/index.js
   languageName: unknown

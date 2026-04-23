@@ -43,7 +43,6 @@
     "@types/rimraf": "^4.0.5",
     "@types/semver": "^7.5.0",
     "@types/tmp": "^0.2.3",
-    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
     "commitlint": "^19.8.1",
@@ -79,8 +78,7 @@
     "rimraf": "^5.0.1",
     "semver": "^7.5.3",
     "tar": "^7.5.4",
-    "tmp": "^0.2.1",
-    "uuid": "^8.3.2"
+    "tmp": "^0.2.1"
   },
   "dependenciesMeta": {
     "unrs-resolver": {

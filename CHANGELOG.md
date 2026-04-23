@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.16.1](https://github.com/mhassan1/redis-memory-server/compare/v0.16.0...v0.16.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* remove vulnerable dependency `uuid` ([19fdb73](https://github.com/mhassan1/redis-memory-server/commit/19fdb73f19a54d1fb2eada76ee80e9a8318806a1))
+
 ## [0.16.0](https://github.com/mhassan1/redis-memory-server/compare/v0.15.1...v0.16.0) (2026-01-29)
 
 

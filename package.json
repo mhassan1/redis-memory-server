@@ -69,7 +69,6 @@
     "camelcase": "^6.3.0",
     "cross-spawn": "^7.0.3",
     "debug": "^4.3.4",
-    "extract-zip": "^2.0.1",
     "find-cache-dir": "^3.3.2",
     "find-package-json": "^1.2.0",
     "get-port": "^5.1.1",

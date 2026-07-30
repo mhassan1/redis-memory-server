@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.17.1](https://github.com/mhassan1/redis-memory-server/compare/v0.17.0...v0.17.1) (2026-07-30)
+
+
+### Bug Fixes
+
+* disable modules for redis 8.10 ([86e021f](https://github.com/mhassan1/redis-memory-server/commit/86e021f02a6695baa32148f9fa7ae3d2fce39265))
+
 ## [0.17.0](https://github.com/mhassan1/redis-memory-server/compare/v0.16.1...v0.17.0) (2026-06-22)
 
 

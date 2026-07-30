@@ -347,7 +347,13 @@ export default class RedisBinaryDownload {
   async makeInstall(extractDir: string): Promise<void> {
     const binaryName = 'redis-server';
     log(`makeInstall(): ${extractDir}`);
+    const makeFileContents = (
+      await promisify(fs.readFile)(path.resolve(extractDir, 'Makefile'))
+    ).toString();
     const makeArgs: string[] = [
+      // skip building modules in redis 8.10 and above (which started building modules, by default),
+      // since they require new dependencies that users may not have
+      ...(/\nbuild:/.test(makeFileContents) ? ['build', 'redis'] : []),
       // https://github.com/redis/redis/issues/12759
       'JEMALLOC_CONFIGURE_OPTS=--with-lg-vaddr=48',
     ];

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.17.2](https://github.com/mhassan1/redis-memory-server/compare/v0.17.1...v0.17.2) (2026-11-10)
+
+
+### Bug Fixes
+
+* remove vulnerable runtime dependency `glob` ([324c20c](https://github.com/mhassan1/redis-memory-server/commit/324c20c191e727556a9319f0eced47af5c7e3eb7))
+
 ### [0.17.1](https://github.com/mhassan1/redis-memory-server/compare/v0.17.0...v0.17.1) (2026-07-30)
 
 

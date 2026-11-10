@@ -1,7 +1,6 @@
 import url from 'url';
 import path from 'path';
 import fs from 'fs';
-import { rimraf } from 'rimraf';
 import http from 'http';
 import https from 'https';
 import * as tar from 'tar';
@@ -229,7 +228,7 @@ export default class RedisBinaryDownload {
         redisArchive,
         `TARGETDIR=${tmpExtractDir}`,
       ]);
-      await rimraf(path.resolve(extractDir, 'Memurai'));
+      await promisify(fs.rm)(path.resolve(extractDir, 'Memurai'), { force: true, recursive: true });
       await promisify(fs.rename)(
         path.resolve(tmpExtractDir, 'Memurai'),
         path.resolve(extractDir, 'Memurai')
@@ -364,7 +363,7 @@ export default class RedisBinaryDownload {
       path.resolve(extractDir, 'src', binaryName),
       path.resolve(extractDir, '..', binaryName)
     );
-    await rimraf(extractDir);
+    await promisify(fs.rm)(extractDir, { force: true, recursive: true });
   }
 
   /**
@@ -382,7 +381,7 @@ export default class RedisBinaryDownload {
         (err: Error | null) => (err ? reject(err) : resolve())
       );
     });
-    await rimraf(extractDir);
+    await promisify(fs.rm)(extractDir, { force: true, recursive: true });
   }
 
   /**

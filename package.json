@@ -40,7 +40,6 @@
     "@types/jest": "^30.0.0",
     "@types/lockfile": "^1.0.2",
     "@types/node": "^18.11.9",
-    "@types/rimraf": "^4.0.5",
     "@types/semver": "^7.5.0",
     "@types/tmp": "^0.2.3",
     "@typescript-eslint/eslint-plugin": "^8.60.0",
@@ -56,6 +55,7 @@
     "jest": "^30.0.0",
     "lint-staged": "^16.1.2",
     "prettier": "^3.5.3",
+    "rimraf": "^6.1.4",
     "standard-version": "^9.5.0",
     "ts-jest": "^29.1.1",
     "typescript": "~6.0.3"
@@ -74,7 +74,6 @@
     "get-port": "^5.1.1",
     "https-proxy-agent": "^7.0.0",
     "lockfile": "^1.0.4",
-    "rimraf": "^5.0.1",
     "semver": "^7.5.3",
     "tar": "^7.5.4",
     "tmp": "^0.2.1"

@@ -30,7 +30,6 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@types/cross-spawn": "^6.0.2",
     "@types/debug": "^4.1.8",
@@ -42,8 +41,6 @@
     "@types/node": "^18.11.9",
     "@types/semver": "^7.5.0",
     "@types/tmp": "^0.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.60.0",
-    "@typescript-eslint/parser": "^8.60.0",
     "commitlint": "^19.8.1",
     "cross-env": "^7.0.3",
     "eslint": "^10.4.0",
@@ -58,10 +55,11 @@
     "rimraf": "^6.1.4",
     "standard-version": "^9.5.0",
     "ts-jest": "^29.1.1",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.2"
   },
   "lint-staged": {
-    "**/*.{ts,tsx,js,jsx}": [
+    "**/*.{ts,tsx,js,jsx,mjs}": [
       "eslint --fix"
     ]
   },
@@ -92,7 +90,7 @@
     "lint": "yarn eslint && yarn tscheck",
     "release": "standard-version",
     "prepublishOnly": "yarn build",
-    "eslint": "eslint '**/*.{js,ts}'",
+    "eslint": "eslint '**/*.{js,ts,mjs}'",
     "test": "yarn lint && yarn coverage",
     "test:watch": "yarn watch",
     "tscheck": "tsc --noEmit"

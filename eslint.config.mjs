@@ -1,43 +1,14 @@
-/* eslint @typescript-eslint/no-require-imports: 0 */
+import js from '@eslint/js';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import tseslint from 'typescript-eslint';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
 
-const { defineConfig, globalIgnores } = require('eslint/config');
-
-const tsParser = require('@typescript-eslint/parser');
-const typescriptEslint = require('@typescript-eslint/eslint-plugin');
-const prettier = require('eslint-plugin-prettier');
-const globals = require('globals');
-const js = require('@eslint/js');
-
-const { FlatCompat } = require('@eslint/eslintrc');
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
-
-module.exports = defineConfig([
+export default defineConfig(
+  js.configs.recommended,
+  tseslint.configs.recommended,
+  eslintPluginPrettierRecommended,
   {
-    languageOptions: {
-      parser: tsParser,
-      sourceType: 'module',
-
-      parserOptions: {
-        useJSXTextNode: true,
-      },
-
-      globals: {
-        ...globals.jest,
-      },
-    },
-
-    plugins: {
-      '@typescript-eslint': typescriptEslint,
-      prettier,
-    },
-
-    extends: compat.extends('plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'),
-
     rules: {
       'no-underscore-dangle': 0,
       'arrow-body-style': 0,
@@ -78,5 +49,12 @@ module.exports = defineConfig([
       curly: ['error', 'all'],
     },
   },
-  globalIgnores(['flow-typed/*', 'lib/*', '.yarn/*']),
-]);
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  globalIgnores(['flow-typed/*', 'lib/*', '.yarn/*'])
+);
